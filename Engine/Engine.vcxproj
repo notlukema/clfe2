@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{421ec9de-7ed2-46ef-bc08-c7ace554064a}</ProjectGuid>
-    <RootNamespace>yi</RootNamespace>
+    <ProjectGuid>{2a5e9f42-0192-48c5-aa0f-8e966b2a52a2}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -55,8 +55,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -139,7 +138,23 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="yi.cpp" />
+    <ClCompile Include="clfe\clmath\cross7_selftest.cpp" />
+    <ClCompile Include="Engine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="clfe\clmath\cross7.hpp" />
+    <ClInclude Include="clfe\clmath\math.h" />
+    <ClInclude Include="clfe\clmath\mconst.h" />
+    <ClInclude Include="clfe\clmath\mdef.h" />
+    <ClInclude Include="clfe\clmath\vec.h" />
+    <ClInclude Include="clfe\clmath\vec3.h" />
+    <ClInclude Include="clfe\clmath\vec4.h" />
+    <ClInclude Include="clfe\clmath\vecdef.h" />
+    <ClInclude Include="clfe\clmath\vecop.h" />
+    <ClInclude Include="clfe\clmath\vector.h" />
+    <ClInclude Include="clfe\clmath\vec2.h" />
+    <ClInclude Include="clfe\clutil\print.h" />
+    <ClInclude Include="clfe\features.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -6,5 +6,7 @@ After taking an extended vacation, I had lost interest and have now started on t
 
 Funky
 
-Inner projects:
-* Unsure, will define later
+Components:
+* clmath - The math library
+* clutil - Utilities library
+* clwind - The windowing module
