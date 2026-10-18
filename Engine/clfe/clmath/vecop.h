@@ -12,7 +12,7 @@ namespace clfe
 	// Create a smaller or similar vector using a larger or similar vector
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U>
 		requires (Size1 <= Size2) && (Size1 > 0) && mcompat<T, U>
-	clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec)
+	constexpr clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec)
 	{
 		clmvec<Size1, T> result;
 		for (clmsize_t i = 0; i < Size1; i++)
@@ -26,7 +26,7 @@ namespace clfe
 	// Single case (fill with number)
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U, typename V>
 		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U, V>
-	clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, V val)
+	constexpr clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, V val)
 	{
 		clmvec<Size1, T> result;
 		clmsize_t i = 0;
@@ -45,7 +45,7 @@ namespace clfe
 	// Empty case (fill with 0)
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U>
 		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U>
-	inline clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec)
+	constexpr inline clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec)
 	{
 		return vresize<Size1, T, Size2, U, T>(vec, static_cast<T>(0));
 	}
@@ -54,7 +54,7 @@ namespace clfe
 	// Filled case (fill with arguments)
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U, typename... Args>
 		requires (Size1 > Size2) && (Size2 > 0) && (sizeof...(Args) == Size1 - Size2) && (sizeof...(Args) > 1) && mcompat<T, U, Args...>
-	clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, Args... args)
+	constexpr clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, Args... args)
 	{
 		clmvec<Size1, T> result;
 		clmsize_t i = 0;
@@ -72,7 +72,7 @@ namespace clfe
 	// Cast to another vector type (Note: there are so many other ways to do the same thing)
 	template <typename T, clmsize_t Size, typename U>
 		requires (Size > 0) && mcompat<T, U>
-	inline clmvec<Size, T> vcast(const clmvec<Size, U>& vec)
+	constexpr inline clmvec<Size, T> vcast(const clmvec<Size, U>& vec)
 	{
 		return clmvec<Size, T>(vec);
 	}
@@ -81,8 +81,8 @@ namespace clfe
 
 	// Dot product
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && arithmetic<T> && arithmetic<U> //requires(T a, U b, decltype(static_cast<T>(0) + static_cast<U>(0)) c) { a + b; c * c; }
-	auto vdot(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> decltype(static_cast<T>(0) * static_cast<U>(0))
+		requires (Size > 0) && arithmetic<T, U> //requires(T a, U b, decltype(static_cast<T>(0) + static_cast<U>(0)) c) { a + b; c * c; }
+	constexpr auto vdot(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> decltype(static_cast<T>(0) * static_cast<U>(0))
 	{
 		auto result = static_cast<decltype(static_cast<T>(0) * static_cast<U>(0))>(0);
 		for (clmsize_t i = 0; i < Size; i++)
@@ -94,8 +94,8 @@ namespace clfe
 
 	// Cross product of size 3
 	template <typename T, typename U>
-		requires arithmetic<T> && arithmetic<U>
-	auto vcross(const clmvec<3, T>& vec1, const clmvec<3, U>& vec2) -> clmvec<3, decltype(static_cast<T>(0) * static_cast<U>(0))>
+		requires arithmetic<T, U>
+	constexpr auto vcross(const clmvec<3, T>& vec1, const clmvec<3, U>& vec2) -> clmvec<3, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		return clmvec<3, decltype(static_cast<T>(0) * static_cast<U>(0))>(
 			vec1.get(1) * vec2.get(2) - vec1.get(2) * vec2.get(1),
@@ -107,8 +107,8 @@ namespace clfe
 	// Cross product of size 7
 	// Note: this function is untested
 	template <typename T, typename U>
-		requires arithmetic<T> && arithmetic<U>
-	auto vcross(const clmvec<7, T>& vec1, const clmvec<7, U>& vec2) -> clmvec<7, decltype(static_cast<T>(0) * static_cast<U>(0))>
+		requires arithmetic<T, U>
+	constexpr auto vcross(const clmvec<7, T>& vec1, const clmvec<7, U>& vec2) -> clmvec<7, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		return clmvec<7, decltype(static_cast<T>(0) * static_cast<U>(0))>(
 			vec1.get(1) * vec2.get(2) - vec1.get(2) * vec2.get(1) + vec1.get(3) * vec2.get(6) - vec1.get(6) * vec2.get(3) + vec1.get(4) * vec2.get(5) - vec1.get(5) * vec2.get(4),
@@ -126,7 +126,7 @@ namespace clfe
 	// vec + vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a + b; }
-	auto operator+(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
+	constexpr auto operator+(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -139,7 +139,7 @@ namespace clfe
 	// vec + val
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a + b; }
-	auto operator+(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
+	constexpr auto operator+(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -152,7 +152,7 @@ namespace clfe
 	// val + vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a + b; }
-	inline auto operator+(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
+	constexpr auto operator+(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) + static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -164,8 +164,8 @@ namespace clfe
 
 	// vec += vec
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a + b } -> mcompat<T>; }
-	clmvec<Size, T>& operator+=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+		requires (Size > 0) && requires(T a, U b) { { a + b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator+=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -176,8 +176,8 @@ namespace clfe
 
 	// vec += val
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a + b } -> mcompat<T>; }
-	clmvec<Size, T>& operator+=(clmvec<Size, T>& vec, U val)
+		requires (Size > 0) && requires(T a, U b) { { a + b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator+=(clmvec<Size, T>& vec, U val)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -189,7 +189,7 @@ namespace clfe
 	// vec - vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a - b; }
-	auto operator-(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
+	constexpr auto operator-(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -202,7 +202,7 @@ namespace clfe
 	// vec - val
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a - b; }
-	auto operator-(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
+	constexpr auto operator-(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -215,7 +215,7 @@ namespace clfe
 	// val - vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a - b; }
-	inline auto operator-(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
+	constexpr auto operator-(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) - static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -227,8 +227,8 @@ namespace clfe
 
 	// vec -= vec
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a - b } -> mcompat<T>; }
-	clmvec<Size, T>& operator-=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+		requires (Size > 0) && requires(T a, U b) { { a - b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator-=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -239,8 +239,8 @@ namespace clfe
 
 	// vec -= val
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a - b } -> mcompat<T>; }
-	clmvec<Size, T>& operator-=(clmvec<Size, T>& vec, U val)
+		requires (Size > 0) && requires(T a, U b) { { a - b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator-=(clmvec<Size, T>& vec, U val)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -252,7 +252,7 @@ namespace clfe
 	// vec * vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a * b; }
-	auto operator*(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
+	constexpr auto operator*(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -265,7 +265,7 @@ namespace clfe
 	// vec + val
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a * b; }
-	auto operator*(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
+	constexpr auto operator*(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -278,7 +278,7 @@ namespace clfe
 	// val * vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a * b; }
-	inline auto operator*(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
+	constexpr auto operator*(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) * static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -290,8 +290,8 @@ namespace clfe
 
 	// vec *= vec
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a * b } -> mcompat<T>; }
-	clmvec<Size, T>& operator*=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+		requires (Size > 0) && requires(T a, U b) { { a * b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator*=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -302,8 +302,8 @@ namespace clfe
 
 	// vec *= val
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a * b } -> mcompat<T>; }
-	clmvec<Size, T>& operator*=(clmvec<Size, T>& vec, U val)
+		requires (Size > 0) && requires(T a, U b) { { a * b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator*=(clmvec<Size, T>& vec, U val)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -315,7 +315,7 @@ namespace clfe
 	// vec / vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a / b; }
-	auto operator/(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
+	constexpr auto operator/(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -328,7 +328,7 @@ namespace clfe
 	// vec / val
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a / b; }
-	auto operator/(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
+	constexpr auto operator/(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -341,7 +341,7 @@ namespace clfe
 	// val / vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a / b; }
-	inline auto operator/(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
+	constexpr auto operator/(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>
 	{
 		auto result = clmvec<Size, decltype(static_cast<T>(0) / static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Size; i++)
@@ -353,8 +353,8 @@ namespace clfe
 
 	// vec /= vec
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a / b } -> mcompat<T>; }
-	clmvec<Size, T>& operator/=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+		requires (Size > 0) && requires(T a, U b) { { a / b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator/=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -365,12 +365,75 @@ namespace clfe
 
 	// vec /= val
 	template <clmsize_t Size, typename T, typename U>
-		requires (Size > 0) && requires(T a, U b) { { a / b } -> mcompat<T>; }
-	clmvec<Size, T>& operator/=(clmvec<Size, T>& vec, U val)
+		requires (Size > 0) && requires(T a, U b) { { a / b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator/=(clmvec<Size, T>& vec, U val)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
 			vec.set(i, static_cast<T>(vec.get(i) / val));
+		}
+		return vec;
+	}
+
+	// vec % vec
+	template <clmsize_t Size, typename T, typename U>
+		requires (Size > 0) && requires(T a, U b) { a % b; }
+	constexpr auto operator%(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2) -> clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>
+	{
+		auto result = clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>();
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			result.set(i, vec1.get(i) % vec2.get(i));
+		}
+		return result;
+	}
+
+	// vec % val
+	template <clmsize_t Size, typename T, typename U>
+		requires (Size > 0) && requires(T a, U b) { a % b; }
+	constexpr auto operator%(const clmvec<Size, T>& vec, U val) -> clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>
+	{
+		auto result = clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>();
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			result.set(i, vec.get(i) % val);
+		}
+		return result;
+	}
+
+	// val % vec
+	template <clmsize_t Size, typename T, typename U>
+		requires (Size > 0) && requires(T a, U b) { a % b; }
+	constexpr auto operator%(T val, const clmvec<Size, U>& vec) -> clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>
+	{
+		auto result = clmvec<Size, decltype(static_cast<T>(0) % static_cast<U>(0))>();
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			result.set(i, val % vec.get(i));
+		}
+		return result;
+	}
+
+	// vec %= vec
+	template <clmsize_t Size, typename T, typename U>
+		requires (Size > 0) && requires(T a, U b) { { a % b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator%=(clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+	{
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			vec1.set(i, static_cast<T>(vec1.get(i) % vec2.get(i)));
+		}
+		return vec1;
+	}
+
+	// vec %= val
+	template <clmsize_t Size, typename T, typename U>
+		requires (Size > 0) && requires(T a, U b) { { a % b } -> mconvert<T>; }
+	constexpr clmvec<Size, T>& operator%=(clmvec<Size, T>& vec, U val)
+	{
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			vec.set(i, static_cast<T>(vec.get(i) % val));
 		}
 		return vec;
 	}
@@ -380,7 +443,7 @@ namespace clfe
 	// vec == vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a == b; }
-	bool operator==(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+	constexpr bool operator==(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{
@@ -396,7 +459,7 @@ namespace clfe
 	// vec != vec
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && requires(T a, U b) { a != b; }
-	bool operator!=(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
+	constexpr bool operator!=(const clmvec<Size, T>& vec1, const clmvec<Size, U>& vec2)
 	{
 		for (clmsize_t i = 0; i < Size; i++)
 		{

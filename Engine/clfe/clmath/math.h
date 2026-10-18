@@ -6,7 +6,7 @@
 // Porting std math functions into clfe
 // Maybe add comment annotations?
 
-// Also waiting for constexpr std math functions lol (hope I don't forget by that time)
+// Would add constexpr bindings but I'm not sure which functions exactly will be getting constexpr and when
 
 namespace clfe
 {

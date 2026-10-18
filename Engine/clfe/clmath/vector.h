@@ -9,4 +9,8 @@
 #include "vecop.h"
 #include "vecdef.h"
 
+#if defined(CLFE_CLMATH_MAT_H)
+#include "mvop.h"
+#endif
+
 #endif // CLFE_CLMATH_VECTOR_H

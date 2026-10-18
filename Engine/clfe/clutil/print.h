@@ -112,6 +112,62 @@ namespace clfe
 
 #endif
 
+#ifdef CLFE_CLMATH_MAT_H
+
+	template <clmsize_t Rows, clmsize_t Cols, typename T>
+	void print(const clmmat<Rows, Cols, T>& mat) requires (Rows > 0) && (Cols > 0) && printable<T>
+	{
+		print("[");
+		for (clmsize_t r = 0; r < mat.rows(); r++)
+		{
+			if (r > 0)
+			{
+				print(" ");
+			}
+			auto vec = mat.get(r);
+			clmsize_t c = 0;
+			for (; c < vec.size() - 1; c++)
+			{
+				print(vec.get(c));
+				print(", ");
+			}
+			print(vec.get(c));
+			if (r < mat.rows() - 1)
+			{
+				print("\n");
+			}
+		}
+		print("]");
+	}
+	
+	template <clmsize_t Rows, clmsize_t Cols, typename T>
+	std::ostream& operator<<(std::ostream& os, const clmmat<Rows, Cols, T>& mat) requires (Rows > 0) && (Cols > 0) && printable<T>
+	{
+		os << "[";
+		for (clmsize_t r = 0; r < mat.rows(); r++)
+		{
+			if (r > 0)
+			{
+				os << " ";
+			}
+			auto vec = mat.get(r);
+			clmsize_t c = 0;
+			for (; c < vec.size() - 1; c++)
+			{
+				os << vec.get(c) << ", ";
+			}
+			os << vec.get(c);
+			if (r < mat.rows() - 1)
+			{
+				os << "\n";
+			}
+		}
+		os << "]";
+		return os;
+	}
+	
+#endif
+
 	// Special println
 
 	template <typename T>

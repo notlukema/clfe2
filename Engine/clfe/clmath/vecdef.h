@@ -3,6 +3,11 @@
 
 #include <cstdint>
 
+#include "clfe/features.h"
+#if _CPP_VERSION >= 23
+#include <stdfloat>
+#endif
+
 #include "mdef.h"
 #include "vec.h"
 
@@ -83,6 +88,46 @@ namespace clfe
 	using vec4_u32 = clmvec<4, uint32_t>;
 	using vec4_i64 = clmvec<4, int64_t>;
 	using vec4_u64 = clmvec<4, uint64_t>;
+
+#if defined(__STDCPP_FLOAT16_T__)
+
+	using vec2_f16 = clmvec<2, std::float16_t>;
+	using vec3_f16 = clmvec<3, std::float16_t>;
+	using vec4_f16 = clmvec<4, std::float16_t>;
+
+#endif
+
+#if defined(__STDCPP_FLOAT32_T__)
+
+	using vec2_f32 = clmvec<2, std::float32_t>;
+	using vec3_f32 = clmvec<3, std::float32_t>;
+	using vec4_f32 = clmvec<4, std::float32_t>;
+
+#endif
+
+#if defined(__STDCPP_FLOAT64_T__)
+
+	using vec2_f64 = clmvec<2, std::float64_t>;
+	using vec3_f64 = clmvec<3, std::float64_t>;
+	using vec4_f64 = clmvec<4, std::float64_t>;
+
+#endif
+
+#if defined(__STDCPP_FLOAT128_T__)
+
+	using vec2_f128 = clmvec<2, std::float128_t>;
+	using vec3_f128 = clmvec<3, std::float128_t>;
+	using vec4_f128 = clmvec<4, std::float128_t>;
+
+#endif
+
+#if defined(__STDCPP_BFLOAT16_T__)
+
+	using vec2_bf16 = clmvec<2, std::bfloat16_t>;
+	using vec3_bf16 = clmvec<3, std::bfloat16_t>;
+	using vec4_bf16 = clmvec<4, std::bfloat16_t>;
+
+#endif
 
 }
 

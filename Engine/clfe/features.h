@@ -54,7 +54,7 @@
 
 // Custom macros:
 //#define _CLFE_KEEP_DEPRECATED (Note: due to cross-compiler complexity, deprecation warnings are not automatically suppressed by the engine and requires user configuration)
-
+//#define _CLFE_CLMATH_COLUMN_MAJOR_MATRIX
 
 // Note: consider implementing std::forward
 

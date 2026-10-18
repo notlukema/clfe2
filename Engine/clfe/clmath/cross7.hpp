@@ -1,7 +1,7 @@
 // AI-generated when asked to write a 7-dimensional cross product function
 // The AI really went a "little" above and beyond
 
-/*#pragma once
+#pragma once
 // ===========================================================================
 //  cross7.hpp - 7-dimensional cross product for clmvec<Size, T>
 //
@@ -124,4 +124,3 @@ inline clmvec<Size, T> cross7_unrolled(const clmvec<Size, T>& a, const clmvec<Si
 }
 
 } // namespace clm
-*/

@@ -51,9 +51,9 @@ namespace clfe
 			return static_cast<clmsize_t>(3);
 		}
 
-		constexpr inline const T* get() const
+		constexpr inline T* get() const
 		{
-			return static_cast<const T*>(data);
+			return static_cast<T*>(data);
 		}
 
 		constexpr inline T& operator[](clmsize_t i)
@@ -311,19 +311,19 @@ namespace clfe
 		//
 
 		template <typename U = T>
-		constexpr U dis2() const requires arithmetic_variant1<T, U>
+		constexpr U dis2() const requires arithmetic<T, U>
 		{
 			return static_cast<U>(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
 		}
 
 		template <typename U = T>
-		constexpr U distance() const requires arithmetic_variant1<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr inline U distance() const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
 		{
 			return static_cast<U>(sqrt(dis2<U>()));
 		}
 
 		template <typename U = T>
-		constexpr clmvec<3, U> normalized() const requires arithmetic_variant1<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr clmvec<3, U> normalized() const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
 		{
 			U dist = distance<U>();
 			return clmvec<3, U>(static_cast<U>(data[0] / dist), static_cast<U>(data[1] / dist), static_cast<U>(data[2] / dist));
@@ -341,7 +341,7 @@ namespace clfe
 		// 
 
 		template <typename U = T>
-		constexpr clmvec<3, U> snormalized(const clmvec<3, U>& exception = clmvec<3, U>(), U d2line = mconst<U>::epsilon()) const requires arithmetic_variant1<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr clmvec<3, U> snormalized(const clmvec<3, U>& exception = clmvec<3, U>(), U d2line = mconst<U>::epsilon()) const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
 		{
 			U d2 = dis2<U>();
 			if (d2 < d2line)

@@ -138,14 +138,17 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="clfe\clmath\cross7_selftest.cpp" />
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="clfe\clmath\cross7.hpp" />
+    <ClInclude Include="clfe\clmath\mat.h" />
+    <ClInclude Include="clfe\clmath\matdef.h" />
     <ClInclude Include="clfe\clmath\math.h" />
+    <ClInclude Include="clfe\clmath\matop.h" />
+    <ClInclude Include="clfe\clmath\matrix.h" />
     <ClInclude Include="clfe\clmath\mconst.h" />
     <ClInclude Include="clfe\clmath\mdef.h" />
+    <ClInclude Include="clfe\clmath\mvop.h" />
     <ClInclude Include="clfe\clmath\vec.h" />
     <ClInclude Include="clfe\clmath\vec3.h" />
     <ClInclude Include="clfe\clmath\vec4.h" />

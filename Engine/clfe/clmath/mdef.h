@@ -18,27 +18,33 @@ namespace clfe
 	template <typename T, typename... Args>
 	concept mcompat = (std::convertible_to<Args, T> && ...);
 
+	// Guarentees that From can be converted to To
+	template <typename From, typename To>
+	concept mconvert = std::convertible_to<From, To>;
+
 	//
 
 	// Guarentees that T is an arithmetic type
-	template <typename T>
-	concept arithmetic = std::is_arithmetic_v<T>;
+	template <typename... Args>
+	concept arithmetic = (std::is_arithmetic_v<Args> && ...);
 
 	// Guarentees that T is an integral type
-	template <typename T>
-	concept integral = std::is_integral_v<T>;
+	template <typename... Args>
+	concept integral = (std::is_integral_v<Args> && ...);
 
 	// Guarentees that T is a floating point type
-	template <typename T>
-	concept floating_point = std::is_floating_point_v<T>;
+	template <typename... Args>
+	concept floating_point = (std::is_floating_point_v<Args> && ...);
 
+	/*
 	// Guarentees that T and U are arithmetic types and that T can be converted to U
 	template <typename T, typename U>
-	concept arithmetic_variant1 = arithmetic<T> && arithmetic<U> && std::convertible_to<T, U>;
+	concept arithmetic = arithmetic<T, U> && std::convertible_to<T, U>;
 
 	// Guarentees that T and U are arithmetic types and that the result of T + U can be converted to T
 	template <typename T, typename U>
-	concept arithmetic_variant2 = arithmetic<T> && arithmetic<U> && std::convertible_to<decltype(static_cast<T>(0) + static_cast<U>(0)), T>;
+	concept arithmetic_variant2 = arithmetic<T, U> && std::convertible_to<decltype(static_cast<T>(0) + static_cast<U>(0)), T>;
+	*/
 
 	//
 
@@ -78,14 +84,14 @@ namespace clfe
 	template <typename T, typename U>
 	concept mathable_variant3 = mathable_variant1<T, U> && requires(T a, U b)
 	{
-		{ a + b } -> mcompat<T>;
-		{ a - b } -> mcompat<T>;
-		{ a * b } -> mcompat<T>;
-		{ a / b } -> mcompat<T>;
-		{ b + a } -> mcompat<T>;
-		{ b - a } -> mcompat<T>;
-		{ b * a } -> mcompat<T>;
-		{ b / a } -> mcompat<T>;
+		{ a + b } -> mconvert<T>;
+		{ a - b } -> mconvert<T>;
+		{ a * b } -> mconvert<T>;
+		{ a / b } -> mconvert<T>;
+		{ b + a } -> mconvert<T>;
+		{ b - a } -> mconvert<T>;
+		{ b * a } -> mconvert<T>;
+		{ b / a } -> mconvert<T>;
 	};
 
 	//

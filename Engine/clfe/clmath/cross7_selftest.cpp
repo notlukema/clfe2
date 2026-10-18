@@ -1,5 +1,5 @@
 // AI-generated file to test the AI-generated 7-dimensional cross product function
-/*
+
 // ===========================================================================
 //  cross7_selftest.cpp - compile & run to validate cross7.hpp
 //      cl /std:c++17 /EHsc /W4 /O2 /utf-8 cross7_selftest.cpp
@@ -131,4 +131,3 @@ int main()
     std::printf(failures ? "RESULT: %d FAILED CHECKS\n" : "RESULT: all checks passed (%d failures)\n", failures);
     return failures ? 1 : 0;
 }
-*/

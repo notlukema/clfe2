@@ -21,6 +21,9 @@
     <ClCompile Include="clfe\clmath\cross7_selftest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="clfe\clmath\mat.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="clfe\clmath\vec.h">
@@ -56,10 +59,16 @@
     <ClInclude Include="clfe\clutil\print.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clfe\features.h">
+    <ClInclude Include="clfe\clmath\cross7.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clfe\clmath\cross7.hpp">
+    <ClInclude Include="clfe\clmath\matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\clmath\matdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\features.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

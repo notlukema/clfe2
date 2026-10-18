@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "clfe/clmath/vector.h"
+#include "clfe/clmath/matrix.h"
 
 #include "clfe/clutil/print.h"
 
@@ -44,6 +45,24 @@ int main()
 	std::cout << typeid(decltype(static_cast<int>(0) + static_cast<float>(0))).name() << "\n";
 
 	std::cout << (v != (v + 0.0001f)) << "\n";
+
+
+	std::cout << "\n\n\n\nmatrix test:\n";
+
+	clfe::clmmat<3, 3, float> mat1 = clfe::clmmat<3, 3, float>(5, 1, 3, 6, 3, 9, 1, 2, 0);
+	clfe::println(mat1);
+
+	std::cout << mat1 << "\n";
+	std::cout << mat1.transpose() << "\n";
+	clfe::println(mat1.determinant());
+
+	auto matinv = mat1.inverse();
+
+	clfe::println(matinv);
+
+	auto hopefullyidentity = mat1 * matinv;
+
+	clfe::println(hopefullyidentity);
 
 	//clfe::print_num(14L);
 
