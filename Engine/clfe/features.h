@@ -55,7 +55,8 @@
 //#define _CLFE_KEEP_DEPRECATED // Keeps functions deprecated during C++ function deprecation (Note: due to cross-compiler complexity, deprecation warnings are not automatically suppressed by the engine)
 //#define _CLFE_CLMATH_COLUMN_MAJOR_MATRIX // Changes matrices to be column major (not implemented yet)
 //#define _CLFE_CLMATH_FLIP_VECTOR_MATRIX_MUL // Flips vector-matrix multiplication (vec * mat is equal to the flipped version of mat * vec)
-//#define _CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY // Changes square matrices to be identity by default
+//#define _CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY // Changes square matrices to be zero instead of identity by default
+//#define _CLFE_CLMATH_QUATERNION_W_FIRST // Changes the real value (w) in quaternions to come first in xyzw input functions (not implemented yet)
 
 
 namespace clfe

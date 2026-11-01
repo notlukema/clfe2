@@ -8,35 +8,33 @@
 
 #include "clfe/features.h"
 
-template <typename T, typename U>
-concept test1 = requires(T a, U b) {
-	a + b;
-};
-
-template <typename T, typename U>
-concept test2 = requires(T a, U b) {
-	{ a + b } -> clfe::mcompat<float>;
-};
-
-struct f { f() {} };
+#include "clfe/clmath/matutils.h"
 
 using namespace clfe;
 
 int main()
 {
 
-	mat33i m1(
-		1, 0, 0,
-		-1, 1, 0,
-		-1, 0, 1
-	);
-	mat33i m2(
-		1, 2, 3,
-		1, 3, 1,
-		1, 4, 0
+	clfe::mat44i m44i(
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		1, 0, -1, 0,
+		1, 1, 0, -1
 	);
 
-	println(m1 * m2);
+	clfe::mat44i m44i2(
+		1, 2, 3, 4,
+		5, 6, 7, 8,
+		1, 2, 3, 4,
+		6, 8, 10, 12
+	);
+
+	clfe::println(m44i * m44i2);
+
+	clfe::println(clfe::mrotatex(1.0f) * clfe::mrotatey(2.0f));
+	clfe::println(clfe::mrotateyx(2.0f, 1.0f));
+
+	clfe::println(clfe::mrotate(1.0f));
 
 	/*
 	std::cout << __cplusplus << "\n";

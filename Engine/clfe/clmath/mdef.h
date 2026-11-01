@@ -10,6 +10,8 @@ namespace clfe
 
 	using clmsize_t = uint32_t;
 
+	// Consider using std::remove_cvref_t for all type comparisons
+
 	// Guarentees that all types are the same as T
 	template <typename T, typename... Args>
 	concept msame = (std::same_as<T, Args> && ...);

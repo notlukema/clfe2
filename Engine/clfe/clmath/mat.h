@@ -2,7 +2,6 @@
 #define CLFE_CLMATH_MAT_H
 
 #include "mdef.h"
-#include "mconst.h"
 #include "vec.h"
 
 namespace clfe

@@ -9,7 +9,6 @@
 #endif
 #include <string>
 #include <type_traits>
-#include <concepts>
 
 #include "clfe/features.h"
 

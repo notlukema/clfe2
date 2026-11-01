@@ -146,6 +146,7 @@
     <ClInclude Include="clfe\clmath\math.h" />
     <ClInclude Include="clfe\clmath\matop.h" />
     <ClInclude Include="clfe\clmath\matrix.h" />
+    <ClInclude Include="clfe\clmath\matutils.h" />
     <ClInclude Include="clfe\clmath\mconst.h" />
     <ClInclude Include="clfe\clmath\mdef.h" />
     <ClInclude Include="clfe\clmath\mvop.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="clfe\clmath\vector.h" />
     <ClInclude Include="clfe\clmath\vec2.h" />
     <ClInclude Include="clfe\clutil\print.h" />
+    <ClInclude Include="clfe\clwind\window_index.h" />
     <ClInclude Include="clfe\features.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
