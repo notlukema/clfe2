@@ -18,10 +18,25 @@ namespace clfe
 		D_t data[Rows];
 
 	public:
-		constexpr clmmat() requires !arithmetic<T> : data{}
+#if defined (_CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY)
+
+		constexpr explicit clmmat() : data{}
 		{}
 
-		constexpr explicit clmmat(bool identity = false) requires arithmetic<T> && (Rows != Cols) : data{}
+		constexpr explicit clmmat(bool identity) requires arithmetic<T> && (Rows == Cols) : data{}
+		{
+			if (identity)
+			{
+				for (clmsize_t i = 0; i < Rows; i++)
+				{
+					data[i].set(i, static_cast<T>(1));
+				}
+			}
+		}
+
+#else
+
+		constexpr clmmat() requires !arithmetic<T> || (Rows != Cols) : data{}
 		{}
 
 		constexpr explicit clmmat(bool identity = true) requires arithmetic<T> && (Rows == Cols) : data{}
@@ -34,6 +49,12 @@ namespace clfe
 				}
 			}
 		}
+
+#endif
+
+		// Dummy case
+		constexpr explicit clmmat(bool identity) requires !arithmetic<T> || (Rows != Cols) : data{}
+		{}
 
 		// iscalar = identity scalar (default 1 for square matrices)
 		constexpr explicit clmmat(T iscalar) requires !msame<T, bool>&& arithmetic<T> && (Rows == Cols) : data{}
@@ -171,7 +192,7 @@ namespace clfe
 			return result;
 		}
 
-		constexpr clmmat<Rows, Cols, T>& transpose() requires (Rows == Cols) && (Rows > 1)
+		constexpr clmmat<Rows, Cols, T>& transpose() requires (Rows == Cols)
 		{
 			for (clmsize_t r = 1; r < Rows; r++)
 			{

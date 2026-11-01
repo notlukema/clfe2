@@ -15,6 +15,7 @@
 #include "matop.h"
 #include "matdef.h"
 
+// Always true
 #if defined(CLFE_CLMATH_VEC_H)
 #include "mvop.h"
 #endif

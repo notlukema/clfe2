@@ -177,6 +177,11 @@ namespace clfe
 		print("\n");
 	}
 
+	inline void println()
+	{
+		print("\n");
+	}
+
 }
 
 #endif // CLFE_CLUTIL_PRINT_H

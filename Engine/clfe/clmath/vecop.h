@@ -21,10 +21,19 @@ namespace clfe
 		}
 		return result;
 	}
+
+	// Create a smaller or similar vector using a larger or similar vector
+	// Unused value for compatibility
+	template <clmsize_t Size1, typename T, typename V, clmsize_t Size2, typename U>
+		requires (Size1 <= Size2) && (Size1 > 0) && mcompat<T, U>
+	constexpr inline clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, V val)
+	{
+		return vresize<Size1, T, Size2, U>(vec);
+	}
 	
 	// Create a larger vector using a smaller vector and fill the rest with a value
-	// Single case (fill with number)
-	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U, typename V>
+	// Single case (fill with value)
+	template <clmsize_t Size1, typename T, typename V, clmsize_t Size2, typename U>
 		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U, V>
 	constexpr clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, V val)
 	{
@@ -44,16 +53,16 @@ namespace clfe
 	// Create a larger vector using a smaller vector and fill the rest with a value
 	// Empty case (fill with 0)
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U>
-		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U>
+		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U> && requires() { static_cast<T>(0); }
 	constexpr inline clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec)
 	{
-		return vresize<Size1, T, Size2, U, T>(vec, static_cast<T>(0));
+		return vresize<Size1, T, T, Size2, U>(vec, static_cast<T>(0));
 	}
 
 	// Create a larger vector using a smaller vector and extra supplied arguments
-	// Filled case (fill with arguments)
+	// Variable case (fill with arguments)
 	template <clmsize_t Size1, typename T, clmsize_t Size2, typename U, typename... Args>
-		requires (Size1 > Size2) && (Size2 > 0) && (sizeof...(Args) == Size1 - Size2) && (sizeof...(Args) > 1) && mcompat<T, U, Args...>
+		requires (Size1 > Size2) && (Size2 > 0) && mcompat<T, U, Args...> && (sizeof...(Args) > 1) && (sizeof...(Args) == Size1 - Size2)
 	constexpr clmvec<Size1, T> vresize(const clmvec<Size2, U>& vec, Args... args)
 	{
 		clmvec<Size1, T> result;
@@ -69,7 +78,7 @@ namespace clfe
 		return result;
 	}
 
-	// Cast to another vector type (Note: there are so many other ways to do the same thing)
+	// Cast to another vector type (Note: this function is somewhat redundant)
 	template <typename T, clmsize_t Size, typename U>
 		requires (Size > 0) && mcompat<T, U>
 	constexpr inline clmvec<Size, T> vcast(const clmvec<Size, U>& vec)

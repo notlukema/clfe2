@@ -16,7 +16,7 @@
 #define _MSVC
 #define _COMPILER_NAME "msvc"
 #elif defined(__INTEL_LLVM_COMPILER)
-// Somewhat unsupported as in a lot of assumptions were made about this compiler
+// Somewhat unsupported since a lot of assumptions were made about this compiler
 #define _ICPX
 #define _COMPILER_NAME "icpx"
 #else
@@ -50,13 +50,13 @@
 #endif
 
 // CLFE related macro work
-// nothing yet
 
 // Custom macros:
-//#define _CLFE_KEEP_DEPRECATED (Note: due to cross-compiler complexity, deprecation warnings are not automatically suppressed by the engine and requires user configuration)
-//#define _CLFE_CLMATH_COLUMN_MAJOR_MATRIX
+//#define _CLFE_KEEP_DEPRECATED // Keeps functions deprecated during C++ function deprecation (Note: due to cross-compiler complexity, deprecation warnings are not automatically suppressed by the engine)
+//#define _CLFE_CLMATH_COLUMN_MAJOR_MATRIX // Changes matrices to be column major (not implemented yet)
+//#define _CLFE_CLMATH_FLIP_VECTOR_MATRIX_MUL // Flips vector-matrix multiplication (vec * mat is equal to the flipped version of mat * vec)
+//#define _CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY // Changes square matrices to be identity by default
 
-// Note: consider implementing std::forward
 
 namespace clfe
 {

@@ -20,13 +20,48 @@ concept test2 = requires(T a, U b) {
 
 struct f { f() {} };
 
+using namespace clfe;
 
 int main()
 {
+
+	mat33i m1(
+		1, 0, 0,
+		-1, 1, 0,
+		-1, 0, 1
+	);
+	mat33i m2(
+		1, 2, 3,
+		1, 3, 1,
+		1, 4, 0
+	);
+
+	println(m1 * m2);
+
+	/*
 	std::cout << __cplusplus << "\n";
 	std::cout << _MSVC_LANG << "\n";
 	std::cout << (_CPP_VERSION) << "\n";
 
+	clfe::mat44f m44f(
+		0, 2, 5, -1,
+		6, -12, 6, 7,
+		6, 7, 10, -5,
+		1, 2, -3, -4);
+
+	clfe::println(m44f);
+	//clfe::println(m44f * m44f);
+	//clfe::println(m44f + 2 * clfe::mat44f());
+
+	clfe::println();
+
+	clfe::vec4f v4f(1, 1, 1, 1);
+
+	clfe::println(v4f * m44f);
+	clfe::println(m44f * v4f);
+	*/
+
+	/*
 	clfe::clmvec<5, float> v(1.6677754f);
 
 	clfe::println(v);
@@ -46,6 +81,9 @@ int main()
 
 	std::cout << (v != (v + 0.0001f)) << "\n";
 
+	auto rvec = clfe::vresize<7, float>(v, 6, 7);
+	std::cout << rvec << "\n";
+
 
 	std::cout << "\n\n\n\nmatrix test:\n";
 
@@ -63,6 +101,21 @@ int main()
 	auto hopefullyidentity = mat1 * matinv;
 
 	clfe::println(hopefullyidentity);
+
+	auto shrunk = clfe::mresize<2, 1, int>(hopefullyidentity);
+	clfe::println(shrunk);
+
+	auto expanded = clfe::mresize<3, 3, float>(shrunk, 2, 3, 5, 6, 9, 6, 1);
+	clfe::println(expanded);
+
+	clfe::println(mvcast(rvec));
+
+	clfe::vec4f result;
+	clfe::println(result);
+
+	clfe::mat44d result2;
+	clfe::println(result2);
+	*/
 
 	//clfe::print_num(14L);
 
