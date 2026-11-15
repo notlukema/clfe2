@@ -447,6 +447,21 @@ namespace clfe
 		return vec;
 	}
 
+	// Negation
+
+	// -vec
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && requires(T a) { -a; }
+	constexpr auto operator-(const clmvec<Size, T>& vec) -> clmvec<Size, decltype(-static_cast<T>(0))>
+	{
+		auto result = clmvec<Size, decltype(-static_cast<T>(0))>();
+		for (clmsize_t i = 0; i < Size; i++)
+		{
+			result.set(i, -vec.get(i));
+		}
+		return result;
+	}
+
 	// Comparison
 
 	// vec == vec

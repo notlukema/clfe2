@@ -77,7 +77,19 @@
     <ClInclude Include="clfe\clwind\window_index.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="clfe\clutil\sreader.h">
+    <ClInclude Include="clfe\clutil\bit_stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\clmath\quat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\clmath\quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\clmath\quatdef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="clfe\clmath\quatop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

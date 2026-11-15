@@ -299,11 +299,12 @@ namespace clfe
 	}
 
 	// mat *= mat
+	// Equals mat1 = mat2 * mat1
 	template <clmsize_t Size, typename T, typename U>
 		requires (Size > 0) && arithmetic<T, U>
 	constexpr clmmat<Size, Size, T>& operator*=(const clmmat<Size, Size, T>& mat1, const clmmat<Size, Size, U>& mat2)
 	{
-		auto result = mat1 * mat2;
+		auto result = mat2 * mat1;
 		mat1 = result;
 		return mat1;
 	}
@@ -394,6 +395,21 @@ namespace clfe
 			mat.set(i, static_cast<T>(mat.get(i) % val));
 		}
 		return mat;
+	}
+
+	// Negation
+
+	// -mat
+	template <clmsize_t Rows, clmsize_t Cols, typename T>
+		requires (Rows > 0) && (Cols > 0) && requires(T a) { -a; }
+	constexpr auto operator-(const clmmat<Rows, Cols, T>& mat) -> clmmat<Rows, Cols, decltype(-static_cast<T>(0))>
+	{
+		auto result = clmmat<Rows, Cols, decltype(-static_cast<T>(0))>(false);
+		for (clmsize_t i = 0; i < Rows; i++)
+		{
+			result.set(i, -mat.get(i));
+		}
+		return result;
 	}
 
 	// Comparison
