@@ -10,6 +10,10 @@
 
 #include "clfe/clmath/matutils.h"
 
+#include <fstream>
+#include "clfe/clutil/sreader.h"
+
+
 using namespace clfe;
 
 int main()
@@ -35,6 +39,15 @@ int main()
 	clfe::println(clfe::mrotateyx(2.0f, 1.0f));
 
 	clfe::println(clfe::mrotate(1.0f));
+
+	std::ifstream fs("C:/Users/lukem/.code/vs/clfe2/README.md");
+	std::cout << fs.is_open() << "\n";
+	clfe::bit_pointer bp;
+	while (!bp.read_all)
+	{
+		char f = clfe::read_bits<char>(fs, bp, 8);
+		std::cout << f;
+	}
 
 	/*
 	std::cout << __cplusplus << "\n";

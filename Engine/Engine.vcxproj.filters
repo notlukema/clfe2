@@ -77,5 +77,8 @@
     <ClInclude Include="clfe\clwind\window_index.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="clfe\clutil\sreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
