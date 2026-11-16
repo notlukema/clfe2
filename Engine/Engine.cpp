@@ -11,6 +11,8 @@
 
 #include "clfe/clmath/matutils.h"
 
+#include "clfe/clwind/windows.h"
+
 
 using namespace clfe;
 
@@ -36,7 +38,7 @@ int main()
 	clfe::println(clfe::mrotatex(1.0f) * clfe::mrotatey(2.0f));
 	clfe::println(clfe::mrotateyx(2.0f, 1.0f));
 
-	clfe::println(clfe::mrotate(1.0f));
+	clfe::println(clfe::mrotate(1.0f).inverse());
 
 	std::cout << "\n\n\n";
 
@@ -44,6 +46,18 @@ int main()
 	q1.normalize();
 	clfe::println(q1 * -q1);
 	clfe::println(clfe::vdot(q1, -q1));
+
+	clwindow* window = clfe::create_window(800, 600, "Test Window");
+	clwindow* window2 = new clwwindow(800, 600, -1, -1, "default");
+
+	clfe::clwinit();
+
+	while (true)
+	{
+		clfe::clwstep();
+	}
+
+	clfe::clwterm();
 
 	/*
 	std::cout << __cplusplus << "\n";

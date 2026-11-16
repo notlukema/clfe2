@@ -19,9 +19,9 @@ namespace clfe
 	constexpr clmmat<Rows1, Cols1, T> mresize(const clmmat<Rows2, Cols2, U>& mat)
 	{
 		clmmat<Rows1, Cols1, T> result(false);
-		for (clmsize_t r = 0; r < Rows1; r++)
+		for (clmsize_t r = 0; r < Rows1; ++r)
 		{
-			for (clmsize_t c = 0; c < Cols1; c++)
+			for (clmsize_t c = 0; c < Cols1; ++c)
 			{
 				result.set(r, c, static_cast<T>(mat.get(r, c)));
 			}
@@ -46,16 +46,16 @@ namespace clfe
 	{
 		clmmat<Rows1, Cols1, T> result(false);
 		clmsize_t r = 0;
-		for (; r < size_min(Rows1, Rows2); r++)
+		for (; r < size_min(Rows1, Rows2); ++r)
 		{
 			clmsize_t c = 0;
-			for (; c < size_min(Cols1, Cols2); c++)
+			for (; c < size_min(Cols1, Cols2); ++c)
 			{
 				result.set(r, c, static_cast<T>(mat.get(r, c)));
 			}
 			if constexpr (Cols1 > Cols2)
 			{
-				for (; c < Cols1; c++)
+				for (; c < Cols1; ++c)
 				{
 					result.set(r, c, static_cast<T>(val));
 				}
@@ -63,9 +63,9 @@ namespace clfe
 		}
 		if constexpr (Rows1 > Rows2)
 		{
-			for (; r < Rows1; r++)
+			for (; r < Rows1; ++r)
 			{
-				for (clmsize_t c = 0; c < Cols1; c++)
+				for (clmsize_t c = 0; c < Cols1; ++c)
 				{
 					result.set(r, c, static_cast<T>(val));
 				}
@@ -92,9 +92,9 @@ namespace clfe
 	constexpr clmmat<Rows1, Cols1, T> mresize(const clmmat<Rows2, Cols2, U>& mat, Args... args)
 	{
 			clmmat<Rows1, Cols1, T> result(false);
-			for (clmsize_t r = 0; r < size_min(Rows1, Rows2); r++)
+			for (clmsize_t r = 0; r < size_min(Rows1, Rows2); ++r)
 			{
-				for (clmsize_t c = 0; c < size_min(Cols1, Cols2); c++)
+				for (clmsize_t c = 0; c < size_min(Cols1, Cols2); ++c)
 				{
 					result.set(r, c, static_cast<T>(mat.get(r, c)));
 				}
@@ -103,10 +103,10 @@ namespace clfe
 			clmsize_t c = (Cols1 > Cols2) ? Cols2 : 0;
 			(([&](const auto& arg) {
 				result.set(r, c, static_cast<T>(arg));
-				c++;
+				++c;
 				if (c >= Cols1)
 				{
-					r++;
+					++r;
 					c = (r >= Rows2) ? 0 : Cols2;
 				}
 				}(args)), ...);
@@ -131,7 +131,7 @@ namespace clfe
 	constexpr auto operator+(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat1.get(i) + mat2.get(i));
 		}
@@ -144,7 +144,7 @@ namespace clfe
 	constexpr auto operator+(const clmmat<Rows, Cols, T>& mat, U val) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat.get(i) + val);
 		}
@@ -157,7 +157,7 @@ namespace clfe
 	constexpr auto operator+(T val, const clmmat<Rows, Cols, U>& mat) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) + static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, val + mat.get(i));
 		}
@@ -169,7 +169,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a + b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator+=(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat1.set(i, static_cast<T>(mat1.get(i) + mat2.get(i)));
 		}
@@ -181,7 +181,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a + b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator+=(const clmmat<Rows, Cols, T>& mat, U val)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat.set(i, static_cast<T>(mat.get(i) + val));
 		}
@@ -194,7 +194,7 @@ namespace clfe
 	constexpr auto operator-(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat1.get(i) - mat2.get(i));
 		}
@@ -207,7 +207,7 @@ namespace clfe
 	constexpr auto operator-(const clmmat<Rows, Cols, T>& mat, U val) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat.get(i) - val);
 		}
@@ -220,7 +220,7 @@ namespace clfe
 	constexpr auto operator-(T val, const clmmat<Rows, Cols, U>& mat) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) - static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, val - mat.get(i));
 		}
@@ -232,7 +232,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a - b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator-=(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat1.set(i, static_cast<T>(mat1.get(i) - mat2.get(i)));
 		}
@@ -244,7 +244,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a - b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator-=(const clmmat<Rows, Cols, T>& mat, U val)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat.set(i, static_cast<T>(mat.get(i) - val));
 		}
@@ -257,12 +257,12 @@ namespace clfe
 	constexpr auto operator*(const clmmat<Rows1, Size, T>& mat1, const clmmat<Size, Cols2, U>& mat2) -> clmmat<Rows1, Cols2, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows1, Cols2, decltype(static_cast<T>(0) + static_cast<U>(0))>(false);
-		for (clmsize_t r = 0; r < Rows1; r++)
+		for (clmsize_t r = 0; r < Rows1; ++r)
 		{
-			for (clmsize_t c = 0; c < Cols2; c++)
+			for (clmsize_t c = 0; c < Cols2; ++c)
 			{
 				decltype(static_cast<T>(0) + static_cast<U>(0)) sum = 0;
-				for (clmsize_t k = 0; k < Size; k++)
+				for (clmsize_t k = 0; k < Size; ++k)
 				{
 					sum += mat1.get(r, k) * mat2.get(k, c);
 				}
@@ -278,7 +278,7 @@ namespace clfe
 	constexpr auto operator*(const clmmat<Rows, Cols, T>& mat, U val) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat.get(i) * val);
 		}
@@ -291,7 +291,7 @@ namespace clfe
 	constexpr auto operator*(T val, const clmmat<Rows, Cols, U>& mat) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, val * mat.get(i));
 		}
@@ -314,7 +314,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a * b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator*=(const clmmat<Rows, Cols, T>& mat, U val)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat.set(i, static_cast<T>(mat.get(i) * val));
 		}
@@ -327,7 +327,7 @@ namespace clfe
 	constexpr auto operator/(const clmmat<Rows, Cols, T>& mat, U val) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) / static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) / static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat.get(i) / val);
 		}
@@ -340,7 +340,7 @@ namespace clfe
 	constexpr auto operator/(T val, const clmmat<Rows, Cols, U>& mat) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) / static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) / static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, val / mat.get(i));
 		}
@@ -352,7 +352,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a / b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator/=(const clmmat<Rows, Cols, T>& mat, U val)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat.set(i, static_cast<T>(mat.get(i) / val));
 		}
@@ -365,7 +365,7 @@ namespace clfe
 	constexpr auto operator%(const clmmat<Rows, Cols, T>& mat, U val) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) % static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) % static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, mat.get(i) % val);
 		}
@@ -378,7 +378,7 @@ namespace clfe
 	constexpr auto operator%(T val, const clmmat<Rows, Cols, U>& mat) -> clmmat<Rows, Cols, decltype(static_cast<T>(0) % static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(static_cast<T>(0) % static_cast<U>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, val % mat.get(i));
 		}
@@ -390,7 +390,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { { a % b } -> mconvert<T>; }
 	constexpr clmmat<Rows, Cols, T>& operator%=(const clmmat<Rows, Cols, T>& mat, U val)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			mat.set(i, static_cast<T>(mat.get(i) % val));
 		}
@@ -405,7 +405,7 @@ namespace clfe
 	constexpr auto operator-(const clmmat<Rows, Cols, T>& mat) -> clmmat<Rows, Cols, decltype(-static_cast<T>(0))>
 	{
 		auto result = clmmat<Rows, Cols, decltype(-static_cast<T>(0))>(false);
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			result.set(i, -mat.get(i));
 		}
@@ -419,7 +419,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { a == b; }
 	constexpr bool operator==(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			if (mat1.get(i) == mat2.get(i))
 			{
@@ -435,7 +435,7 @@ namespace clfe
 		requires (Rows > 0) && (Cols > 0) && requires(T a, U b) { a == b; }
 	constexpr bool operator!=(const clmmat<Rows, Cols, T>& mat1, const clmmat<Rows, Cols, U>& mat2)
 	{
-		for (clmsize_t i = 0; i < Rows; i++)
+		for (clmsize_t i = 0; i < Rows; ++i)
 		{
 			if (mat1.get(i) != mat2.get(i))
 			{

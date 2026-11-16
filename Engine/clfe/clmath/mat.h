@@ -17,50 +17,28 @@ namespace clfe
 		D_t data[Rows];
 
 	public:
-#if defined (_CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY)
-
-		constexpr explicit clmmat() : data{}
-		{}
-
-		constexpr explicit clmmat(bool identity) requires arithmetic<T> && (Rows == Cols) : data{}
+		constexpr explicit clmmat(bool identity = true) : data{}
 		{
-			if (identity)
+#if !defined(_CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY)
+			if constexpr (arithmetic<T> && (Rows == Cols))
 			{
-				for (clmsize_t i = 0; i < Rows; i++)
+				if (identity)
 				{
-					data[i].set(i, static_cast<T>(1));
+					for (clmsize_t i = 0; i < Rows; ++i)
+					{
+						data[i].set(i, static_cast<T>(1));
+					}
 				}
 			}
-		}
-
-#else
-
-		constexpr clmmat() requires !arithmetic<T> || (Rows != Cols) : data{}
-		{}
-
-		constexpr explicit clmmat(bool identity = true) requires arithmetic<T> && (Rows == Cols) : data{}
-		{
-			if (identity)
-			{
-				for (clmsize_t i = 0; i < Rows; i++)
-				{
-					data[i].set(i, static_cast<T>(1));
-				}
-			}
-		}
-
 #endif
-
-		// Dummy case
-		constexpr explicit clmmat(bool identity) requires !arithmetic<T> || (Rows != Cols) : data{}
-		{}
+		}
 
 		// iscalar = identity scalar (default 1 for square matrices)
-		constexpr explicit clmmat(T iscalar) requires !msame<T, bool>&& arithmetic<T> && (Rows == Cols) : data{}
+		constexpr explicit clmmat(T i_scalar) requires (!msame<T, bool>) && arithmetic<T> && (Rows == Cols) : data{}
 		{
-			for (clmsize_t i = 0; i < Rows; i++)
+			for (clmsize_t i = 0; i < Rows; ++i)
 			{
-				data[i].set(i, iscalar);
+				data[i].set(i, i_scalar);
 			}
 		}
 
@@ -68,9 +46,9 @@ namespace clfe
 		constexpr clmmat(Args... args) requires (sizeof...(Args) == Rows * Cols) && mcompat<T, Args...>
 		{
 			T temp[] = { static_cast<T>(args)... };
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
-				for (clmsize_t c = 0; c < Cols; c++)
+				for (clmsize_t c = 0; c < Cols; ++c)
 				{
 					data[r].set(c, temp[r * Cols + c]);
 				}
@@ -80,11 +58,11 @@ namespace clfe
 			clmsize_t c = 0;
 			(([&](const auto& arg) {
 				data[r].set(c, static_cast<T>(arg));
-				c++;
+				++c;
 				if (c >= Cols)
 				{
 					c = 0;
-					r++;
+					++r;
 				}
 				}(args)), ...);
 			*/
@@ -93,9 +71,9 @@ namespace clfe
 		template <typename U>
 		constexpr explicit clmmat(const U* arr) requires mcompat<T, U>
 		{
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
-				for (clmsize_t c = 0; c < Cols; c++)
+				for (clmsize_t c = 0; c < Cols; ++c)
 				{
 					data[r].set(c, arr[r * Cols + c]);
 				}
@@ -106,7 +84,7 @@ namespace clfe
 		template <typename U>
 		constexpr clmmat(const clmmat<Rows, Cols, U>& other) requires mcompat<T, U>
 		{
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
 				data[r] = other.get(r);
 			}
@@ -116,7 +94,7 @@ namespace clfe
 		template <typename U>
 		constexpr clmmat<Rows, Cols, U>& operator=(const clmmat<Rows, Cols, U>& other) requires mcompat<T, U>
 		{
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
 				data[r] = other.get(r);
 			}
@@ -181,9 +159,9 @@ namespace clfe
 		constexpr clmmat<Cols, Rows, U> transposed() const requires mcompat<T, U>
 		{
 			clmmat<Cols, Rows, U> result;
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
-				for (clmsize_t c = 0; c < Cols; c++)
+				for (clmsize_t c = 0; c < Cols; ++c)
 				{
 					result.data[c].set(r, data[r].get(c));
 				}
@@ -193,9 +171,9 @@ namespace clfe
 
 		constexpr clmmat<Rows, Cols, T>& transpose() requires (Rows == Cols)
 		{
-			for (clmsize_t r = 1; r < Rows; r++)
+			for (clmsize_t r = 1; r < Rows; ++r)
 			{
-				for (clmsize_t c = 0; c < r; c++)
+				for (clmsize_t c = 0; c < r; ++c)
 				{
 					T temp = data[r].get(c);
 					data[r].set(c, data[c].get(r));
@@ -222,17 +200,17 @@ namespace clfe
 			{
 				U sum = static_cast<U>(0);
 				U flip = static_cast<U>(1);
-				for (clmsize_t i = 0; i < Size; i++)
+				for (clmsize_t i = 0; i < Size; ++i)
 				{
 					clmsize_t c2[Size - 1] = {};
-					for (clmsize_t k = 0, j = 0; k < Size - 1; k++)
+					for (clmsize_t k = 0, j = 0; k < Size - 1; ++k)
 					{
 						if (j == i)
 						{
-							j++;
+							++j;
 						}
 						c2[k] = c[j];
-						j++;
+						++j;
 					}
 					sum += flip * static_cast<U>(get(r, c[i])) * detHelper<U, Size - 1>(r + 1, c2);
 					flip = static_cast<U>(0) - flip;
@@ -258,21 +236,21 @@ namespace clfe
 				U sum = static_cast<U>(0);
 				U flip = static_cast<U>(1);
 				clmsize_t r2[Size - 1] = {};
-				for (clmsize_t i = 0; i < Size - 1; i++)
+				for (clmsize_t i = 0; i < Size - 1; ++i)
 				{
 					r2[i] = r[i + 1];
 				}
-				for (clmsize_t i = 0; i < Size; i++)
+				for (clmsize_t i = 0; i < Size; ++i)
 				{
 					clmsize_t c2[Size - 1] = {};
-					for (clmsize_t k = 0, j = 0; k < Size - 1; k++)
+					for (clmsize_t k = 0, j = 0; k < Size - 1; ++k)
 					{
 						if (j == i)
 						{
-							j++;
+							++j;
 						}
 						c2[k] = c[j];
-						j++;
+						++j;
 					}
 					sum += flip * static_cast<U>(get(r[0], c[i])) * detHelper2<U, Size - 1>(r2, c2);
 					flip = static_cast<U>(0) - flip;
@@ -286,7 +264,7 @@ namespace clfe
 		constexpr U determinant() requires (Rows == Cols) && arithmetic<T, U>
 		{
 			clmsize_t c[Cols] = {};
-			for (clmsize_t i = 0; i < Cols; i++)
+			for (clmsize_t i = 0; i < Cols; ++i)
 			{
 				c[i] = i;
 			}
@@ -302,20 +280,20 @@ namespace clfe
 			clmsize_t ca[Cols - 1] = {};
 			clmsize_t r1 = 0;
 			clmsize_t c1 = 0;
-			for (clmsize_t i = 0; i < Rows - 1; i++)
+			for (clmsize_t i = 0; i < Rows - 1; ++i)
 			{
 				if (r1 == r)
 				{
-					r1++;
+					++r1;
 				}
 				if (c1 == c)
 				{
-					c1++;
+					++c1;
 				}
 				ra[i] = r1;
 				ca[i] = c1;
-				r1++;
-				c1++;
+				++r1;
+				++c1;
 			}
 			return detHelper2<U, Rows - 1>(ra, ca);
 		}
@@ -326,32 +304,32 @@ namespace clfe
 		{
 			clmmat<Rows, Cols, U> result;
 			clmsize_t ra[Rows - 1] = {};
-			for (clmsize_t i = 0; i < Rows - 1; i++)
+			for (clmsize_t i = 0; i < Rows - 1; ++i)
 			{
 				ra[i] = i + 1;
 			}
 			U flip = static_cast<U>(-1);
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
 				clmsize_t ca[Cols - 1] = {};
-				for (clmsize_t i = 0; i < Cols - 1; i++)
+				for (clmsize_t i = 0; i < Cols - 1; ++i)
 				{
 					ca[i] = i + 1;
 				}
 				U flip2 = static_cast<U>(0) - flip;
-				for (clmsize_t c = 0; c < Cols; c++)
+				for (clmsize_t c = 0; c < Cols; ++c)
 				{
 					result[r].set(c, flip2 * detHelper2<U, Rows - 1>(ra, ca));
 					flip2 = static_cast<U>(0) - flip2;
 					if (c < Cols - 1)
 					{
-						ca[c]--;
+						--ca[c];
 					}
 				}
 				flip = static_cast<U>(0) - flip;
 				if (r < Rows - 1)
 				{
-					ra[r]--;
+					--ra[r];
 				}
 			}
 			return result;
@@ -372,32 +350,32 @@ namespace clfe
 			U invdet = static_cast<U>(1) / determinant<U>();
 			clmmat<Rows, Cols, U> result;
 			clmsize_t ra[Rows - 1] = {};
-			for (clmsize_t i = 0; i < Rows - 1; i++)
+			for (clmsize_t i = 0; i < Rows - 1; ++i)
 			{
 				ra[i] = i + 1;
 			}
 			U flip = static_cast<U>(-1);
-			for (clmsize_t r = 0; r < Rows; r++)
+			for (clmsize_t r = 0; r < Rows; ++r)
 			{
 				clmsize_t ca[Cols - 1] = {};
-				for (clmsize_t i = 0; i < Cols - 1; i++)
+				for (clmsize_t i = 0; i < Cols - 1; ++i)
 				{
 					ca[i] = i + 1;
 				}
 				U flip2 = static_cast<U>(0) - flip;
-				for (clmsize_t c = 0; c < Cols; c++)
+				for (clmsize_t c = 0; c < Cols; ++c)
 				{
 					result[r].set(c, flip2 * detHelper2<U, Rows - 1>(ra, ca) * invdet);
 					flip2 = static_cast<U>(0) - flip2;
 					if (c < Cols - 1)
 					{
-						ca[c]--;
+						--ca[c];
 					}
 				}
 				flip = static_cast<U>(0) - flip;
 				if (r < Rows - 1)
 				{
-					ra[r]--;
+					--ra[r];
 				}
 			}
 			return result.transpose();

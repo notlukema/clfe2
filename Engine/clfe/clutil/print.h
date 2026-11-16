@@ -87,7 +87,7 @@ namespace clfe
 	{
 		print("[");
 		clmsize_t i = 0;
-		for (; i < vec.size() - 1; i++)
+		for (; i < vec.size() - 1; ++i)
 		{
 			print(vec.get(i));
 			print(", ");
@@ -101,7 +101,7 @@ namespace clfe
 	{
 		os << "[";
 		clmsize_t i = 0;
-		for (; i < vec.size() - 1; i++)
+		for (; i < vec.size() - 1; ++i)
 		{
 			os << vec.get(i) << ", ";
 		}
@@ -117,7 +117,7 @@ namespace clfe
 	void print(const clmmat<Rows, Cols, T>& mat) requires (Rows > 0) && (Cols > 0) && printable<T>
 	{
 		print("[");
-		for (clmsize_t r = 0; r < mat.rows(); r++)
+		for (clmsize_t r = 0; r < mat.rows(); ++r)
 		{
 			if (r > 0)
 			{
@@ -125,7 +125,7 @@ namespace clfe
 			}
 			auto vec = mat.get(r);
 			clmsize_t c = 0;
-			for (; c < vec.size() - 1; c++)
+			for (; c < vec.size() - 1; ++c)
 			{
 				print(vec.get(c));
 				print(", ");
@@ -143,7 +143,7 @@ namespace clfe
 	std::ostream& operator<<(std::ostream& os, const clmmat<Rows, Cols, T>& mat) requires (Rows > 0) && (Cols > 0) && printable<T>
 	{
 		os << "[";
-		for (clmsize_t r = 0; r < mat.rows(); r++)
+		for (clmsize_t r = 0; r < mat.rows(); ++r)
 		{
 			if (r > 0)
 			{
@@ -151,7 +151,7 @@ namespace clfe
 			}
 			auto vec = mat.get(r);
 			clmsize_t c = 0;
-			for (; c < vec.size() - 1; c++)
+			for (; c < vec.size() - 1; ++c)
 			{
 				os << vec.get(c) << ", ";
 			}

@@ -22,7 +22,7 @@ namespace clfe
 		constexpr explicit clmvec(U scalar) requires mcompat<T, U>
 		{
 			// No array fill?
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = static_cast<T>(scalar);
 			}
@@ -35,7 +35,7 @@ namespace clfe
 		template <typename U>
 		constexpr explicit clmvec(const U* arr) requires mcompat<T, U>
 		{
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = static_cast<T>(arr[i]);
 			}
@@ -45,7 +45,7 @@ namespace clfe
 		template <typename U>
 		constexpr clmvec(const clmvec<Size, U>& other) requires mcompat<T, U>
 		{
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = static_cast<T>(other.get(i));
 			}
@@ -55,7 +55,7 @@ namespace clfe
 		template <typename U>
 		constexpr clmvec<Size, T>& operator=(const clmvec<Size, U>& other) requires mcompat<T, U>
 		{
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = static_cast<T>(other.get(i));
 			}
@@ -100,7 +100,7 @@ namespace clfe
 		constexpr U dis2() const requires arithmetic<T, U>
 		{
 			T sum = static_cast<T>(0);
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				sum += data[i] * data[i];
 			}
@@ -118,7 +118,7 @@ namespace clfe
 		{
 			U dist = distance<U>();
 			clmvec<Size, U> result;
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				result.data[i] = static_cast<U>(data[i]) / dist;
 			}
@@ -128,7 +128,7 @@ namespace clfe
 		constexpr clmvec<Size, T>& normalize() requires arithmetic<T> && requires { sqrt(static_cast<T>(0)); }
 		{
 			T dist = distance<T>();
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = data[i] / dist;
 			}
@@ -148,7 +148,7 @@ namespace clfe
 
 			U dist = static_cast<U>(sqrt(d2));
 			clmvec<Size, U> result;
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				result.data[i] = static_cast<U>(data[i]) / dist;
 			}
@@ -160,7 +160,7 @@ namespace clfe
 			T d2 = dis2<T>();
 			if (d2 < d2line)
 			{
-				for (clmsize_t i = 0; i < Size; i++)
+				for (clmsize_t i = 0; i < Size; ++i)
 				{
 					data[i] = exception.get(i);
 				}
@@ -168,7 +168,7 @@ namespace clfe
 			}
 
 			T dist = static_cast<T>(sqrt(d2));
-			for (clmsize_t i = 0; i < Size; i++)
+			for (clmsize_t i = 0; i < Size; ++i)
 			{
 				data[i] = data[i] / dist;
 			}

@@ -110,6 +110,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,11 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clfe\clutil\cstringutils.cpp" />
+    <ClCompile Include="clfe\clwind\wind.cpp" />
+    <ClCompile Include="clfe\clwind\windows\winclass.cpp" />
+    <ClCompile Include="clfe\clwind\windows\win_defproc.cpp" />
+    <ClCompile Include="clfe\clwind\windows\wwind.cpp" />
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,8 +167,14 @@
     <ClInclude Include="clfe\clmath\vecop.h" />
     <ClInclude Include="clfe\clmath\vector.h" />
     <ClInclude Include="clfe\clmath\vec2.h" />
+    <ClInclude Include="clfe\clutil\cstringutils.h" />
     <ClInclude Include="clfe\clutil\print.h" />
     <ClInclude Include="clfe\clutil\bit_stream.h" />
+    <ClInclude Include="clfe\clwind\input.h" />
+    <ClInclude Include="clfe\clwind\keytable.h" />
+    <ClInclude Include="clfe\clwind\wind.h" />
+    <ClInclude Include="clfe\clwind\windows.h" />
+    <ClInclude Include="clfe\clwind\windows\wwind.h" />
     <ClInclude Include="clfe\clwind\window_index.h" />
     <ClInclude Include="clfe\features.h" />
   </ItemGroup>

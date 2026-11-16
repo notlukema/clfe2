@@ -116,7 +116,7 @@ namespace clfe
 		rcount_t skip_bytes = count / 8;
 		if (p.bit > 0)
 		{
-			skip_bytes--;
+			--skip_bytes;
 		}
 
 		if (skip_bytes > 0)
@@ -256,7 +256,7 @@ namespace clfe
 				return true;
 			}
 
-			empty_bytes--;
+			--empty_bytes;
 
 			output.write(reinterpret_cast<char*>(&p.last_byte), 1);
 			if (output.fail())
