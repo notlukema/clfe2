@@ -3,7 +3,7 @@
 namespace clfe
 {
 
-	static constexpr LRESULT WinBlankReturn = 0;
+	static constexpr LRESULT Win_Blank_Return = 0;
 
 	LRESULT CALLBACK clwwindow::defproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -25,27 +25,42 @@ namespace clfe
 			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 
+		if (uMsg == WM_SETTEXT)
+		{
+
+			if (IsWindowUnicode(hwnd))
+			{
+				window->record_new_name(reinterpret_cast<const wchar_t*>(lParam));
+			}
+			else
+			{
+				window->record_new_name(reinterpret_cast<const char*>(lParam));
+			}
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
+		}
 		if (uMsg == WM_KEYDOWN)
 		{
 			/*
 			window->getInput()->trigKeyDown(KeyTables::translateKey<WindowsKeys>(wParam));
 			*/
-			return WinBlankReturn;
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 		if (uMsg == WM_KEYUP)
 		{
 			/*
 			window->getInput()->trigKeyUp(KeyTables::translateKey<WindowsKeys>(wParam));
 			*/
-			return WinBlankReturn;
+			return DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 
 		if (uMsg == WM_CLOSE)
 		{
-			/*
-			window->destroy();
-			*/
-			return WinBlankReturn;
+			// According to microsoft, the only thing DefWindowProc() does for WM_CLOSE is call DestroyWindow()
+			// In other words, we can reliably replace it's functionality with our own code
+			//return DefWindowProc(hwnd, uMsg, wParam, lParam);
+			
+			window->request_close();
+			return Win_Blank_Return;
 		}
 
 		if (uMsg == WM_MOVE)

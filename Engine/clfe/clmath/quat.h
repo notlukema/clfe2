@@ -13,7 +13,7 @@ namespace clfe
 	// Note: quaternions do not normalize themselves, so please call normalize() or snormalize() upon creation using non-unit vectors
 
 	template <typename T>
-		requires arithmetic<T>
+		requires floating_point<T>
 	class clmquat : public clmvec<4, T>
 	{
 	public:
@@ -46,14 +46,14 @@ namespace clfe
 		// Override with new default values, though not mandatory (not virtual)
 
 		template <typename U = T>
-		constexpr clmvec<4, U> snormalized(const clmvec<4, U>& exception = clmvec<4, U>(0, 0, 0, 1), U d2line = mconst<U>::epsilon()) const requires arithmetic<U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr inline clmvec<4, U> snormalized(const clmvec<4, U>& ex = clmvec<4, U>((T)0, (T)0, (T)0, (T)1), U thres2 = mconst<U>::epsilon2()) const
 		{
-			return clmvec<4, T>::template snormalized<U>(exception, d2line);
+			return clmvec<4, T>::template snormalized<U>(ex, thres2);
 		}
 
-		constexpr clmvec<4, T>& snormalize(const clmvec<4, T>& exception = clmvec<4, T>(0, 0, 0, 1), T d2line = mconst<T>::epsilon()) requires requires { sqrt(static_cast<T>(0)); }
+		constexpr inline clmvec<4, T>& snormalize(const clmvec<4, T>& ex = clmvec<4, T>((T)0, (T)0, (T)0, (T)1), T thres2 = _CLFE_DEF_THRES2_VALUE)
 		{
-			return clmvec<4, T>::snormalize(exception, d2line);
+			return clmvec<4, T>::snormalize(ex, thres2);
 		}
 
 	};

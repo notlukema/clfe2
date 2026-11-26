@@ -65,18 +65,17 @@
 
 // Custom macros:
 //#define _CLFE_KEEP_DEPRECATED // Keeps functions deprecated during c++ function deprecation (Note: due to cross-compiler complexity, deprecation warnings are not automatically suppressed by the engine)
-//#define _CLFE_CLMATH_FLIP_VECTOR_MATRIX_MUL // Flips vector-matrix multiplication (vec * mat is equal to the flipped version of mat * vec)
 //#define _CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY // Changes square matrices to be zero instead of identity by default
-//#define _CLFE_CLMATH_QUATERNION_W_FIRST // Changes the real value (w) in quaternions to come first in xyzw input functions (not implemented yet)
-
+//#define _CLFE_DEF_THRES2_VALUE // The default threshold tested against length^2 when safe normalizing
+//#define _CLFE_DEF_THRES_VALUE // The default threshold tested against length when safe normalizing
 
 namespace clfe
 {
 
 #if defined (_CPP_VERSION)
-	constexpr int CppVersion = _CPP_VERSION;
+	constexpr inline int Cpp_Version = _CPP_VERSION;
 #else
-	constexpr int CppVersion = -1;
+	constexpr inline int Cpp_Version = -1;
 #endif
 
 }

@@ -18,7 +18,7 @@ namespace clfe
 		{
 			if (*it == wclass)
 			{
-				Classes.erase(it);
+				it = Classes.erase(it);
 			}
 			else
 			{

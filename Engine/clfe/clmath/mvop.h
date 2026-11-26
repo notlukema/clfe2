@@ -110,30 +110,10 @@ namespace clfe
 
 	// Operations
 
-#if defined (_CLFE_CLMATH_FLIP_VECTOR_MATRIX_MUL)
-
-	// vec * mat
-	template <clmsize_t Size, clmsize_t Rows, typename T, typename U>
-		requires (Size > 0) && (Rows > 0) && arithmetic<T, U>
-	constexpr auto operator*(const clmvec<Size, T>& vec, const clmmat<Rows, Size, U>& mat) -> clmvec<Rows, decltype(static_cast<T>(0)* static_cast<U>(0))>
-	{
-		auto result = clmvec<Rows, decltype(static_cast<T>(0) * static_cast<U>(0))>();
-		for (clmsize_t i = 0; i < Rows; ++i)
-		{
-			decltype(static_cast<T>(0) * static_cast<U>(0)) sum = 0;
-			for (clmsize_t c = 0; c < Size; ++c)
-			{
-				sum += vec.get(i) * mat.get(i, c);
-			}
-			result.set(i, sum);
-		}
-		return result;
-	}
-
-	// mat * vec
+	// Vector * Matrix
 	template <clmsize_t Size, clmsize_t Cols, typename T, typename U>
 		requires (Size > 0) && (Cols > 0) && arithmetic<T, U>
-	constexpr auto operator*(const clmmat<Size, Cols, T>& mat, const clmvec<Size, U>& vec) -> clmvec<Cols, decltype(static_cast<T>(0)* static_cast<U>(0))>
+	constexpr auto mvmul(const clmvec<Size, T>& vec, const clmmat<Size, Cols, U>& mat) -> clmvec<Cols, decltype(static_cast<T>(0)* static_cast<U>(0))>
 	{
 		auto result = clmvec<Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Cols; ++i)
@@ -148,30 +128,10 @@ namespace clfe
 		return result;
 	}
 
-#else
-
-	// vec * mat
-	template <clmsize_t Size, clmsize_t Cols, typename T, typename U>
-		requires (Size > 0) && (Cols > 0) && arithmetic<T, U>
-	constexpr auto operator*(const clmvec<Size, T>& vec, const clmmat<Size, Cols, U>& mat) -> clmvec<Cols, decltype(static_cast<T>(0)* static_cast<U>(0))>
-	{
-		auto result = clmvec<Cols, decltype(static_cast<T>(0) * static_cast<U>(0))>();
-		for (clmsize_t i = 0; i < Cols; ++i)
-		{
-			decltype(static_cast<T>(0) * static_cast<U>(0)) sum = 0;
-			for (clmsize_t r = 0; r < Size; ++r)
-			{
-				sum += vec.get(i) * mat.get(r, i);
-			}
-			result.set(i, sum);
-		}
-		return result;
-	}
-
-	// mat * vec
+	// Matrix * Vector
 	template <clmsize_t Size, clmsize_t Rows, typename T, typename U>
 		requires (Size > 0) && (Rows > 0) && arithmetic<T, U>
-	constexpr auto operator*(const clmmat<Rows, Size, T>& mat, const clmvec<Size, U>& vec) -> clmvec<Rows, decltype(static_cast<T>(0)* static_cast<U>(0))>
+	constexpr auto mvmul(const clmmat<Rows, Size, T>& mat, const clmvec<Size, U>& vec) -> clmvec<Rows, decltype(static_cast<T>(0)* static_cast<U>(0))>
 	{
 		auto result = clmvec<Rows, decltype(static_cast<T>(0) * static_cast<U>(0))>();
 		for (clmsize_t i = 0; i < Rows; ++i)
@@ -186,7 +146,21 @@ namespace clfe
 		return result;
 	}
 
-#endif
+	// vec * mat
+	template <clmsize_t Size, clmsize_t Cols, typename T, typename U>
+		requires (Size > 0) && (Cols > 0) && arithmetic<T, U>
+	constexpr inline auto operator*(const clmvec<Size, T>& vec, const clmmat<Size, Cols, U>& mat) -> clmvec<Cols, decltype(static_cast<T>(0)* static_cast<U>(0))>
+	{
+		return mvmul<Size, Cols, T, U>(vec, mat);
+	}
+
+	// mat * vec
+	template <clmsize_t Size, clmsize_t Rows, typename T, typename U>
+		requires (Size > 0) && (Rows > 0) && arithmetic<T, U>
+	constexpr inline auto operator*(const clmmat<Rows, Size, T>& mat, const clmvec<Size, U>& vec) -> clmvec<Rows, decltype(static_cast<T>(0)* static_cast<U>(0))>
+	{
+		return mvmul<Size, Rows, T, U>(mat, vec);
+	}
 
 }
 

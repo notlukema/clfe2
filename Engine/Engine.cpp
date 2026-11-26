@@ -18,7 +18,7 @@ using namespace clfe;
 
 int main()
 {
-
+	/*
 	clfe::mat44i m44i(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -46,18 +46,63 @@ int main()
 	q1.normalize();
 	clfe::println(q1 * -q1);
 	clfe::println(clfe::vdot(q1, -q1));
-
-	clwindow* window = clfe::create_window(800, 600, "Test Window");
-	clwindow* window2 = new clwwindow(800, 600, -1, -1, "default");
-
+	*/
+		
 	clfe::clwinit();
 
-	while (true)
+	clfe::window_hint(clfe::WS_START_VISIBLE | clfe::WS_NO_TASKBAR, true);
+	//clfe::window_hint(clfe::WS_CLOSEABLE, false);
+	clfe::window_hint(clfe::WS_TRANSPARENT);
+	clwindow* window = clfe::create_window(800, 600, "Test Window");
+	//clfe::window_hint(clfe::WS_DECORATED, false);
+	//clfe::window_hint(clfe::WS_RESIZABLE, false);
+	//clfe::window_hint_visible();
+	//clwindow* window2 = new clwwindow(-1, -1, 800, 600, "default", 0);
+	//clwindow* window2 = clfe::create_window(800, 600, "default");
+
+	//window->cpos(200, 300);
+	//window->y(1000);
+	//window->cx(500);
+	//window->csize(800, 600);
+	//window->cwidth(1000);
+
+	window->name("happy");
+
+	std::cout << "pos: " << window->pos() << "\n";
+	std::cout << "cpos: " << window->cpos() << "\n";
+	std::cout << "size: " << window->size() << "\n";
+	std::cout << "csize: " << window->csize() << "\n";
+	std::cout << "title: " << window->name() << "\n";
+
+	std::cout << "\n\n";
+	std::cout << mconst<float>::epsilon() << "\n";
+	std::cout << mconst<double>::epsilon() << "\n";
+
+	vec4f a = vec4f(1, 2, 3, 4);
+	std::cout << vlen2(a) << ", " << vlength(a) << ", " << vinv_len(a) << "\n";
+
+	quatf q1 = quatf(1, 2, 3, 4).normalize();
+	quatf q2 = quatf(4, 3, 2, 1).normalize();
+	for (int i = 0; i < 11; i++)
+	{
+		float t = i / 10.0f;
+		std::cout << "\n" << t << ":\n";
+		std::cout << "qn: " << qnlerp(q1, q2, t) << "\n";
+		std::cout << "qs: " << qslerp(q1, q2, t) << "\n";
+		std::cout << "re: " << qslerp(q2, t) << "\n";
+	}
+
+	while (!window->close_requested())
 	{
 		clfe::clwstep();
 	}
 
+	//window->destroy();
+	//delete window;
+
 	clfe::clwterm();
+
+	return 0;
 
 	/*
 	std::cout << __cplusplus << "\n";
@@ -104,8 +149,9 @@ int main()
 
 	auto rvec = clfe::vresize<7, float>(v, 6, 7);
 	std::cout << rvec << "\n";
+	*/
 
-
+	/*
 	std::cout << "\n\n\n\nmatrix test:\n";
 
 	clfe::clmmat<3, 3, float> mat1 = clfe::clmmat<3, 3, float>(5, 1, 3, 6, 3, 9, 1, 2, 0);
@@ -114,8 +160,9 @@ int main()
 	std::cout << mat1 << "\n";
 	std::cout << mat1.transpose() << "\n";
 	clfe::println(mat1.determinant());
+	clfe::println(mdeterminant(mat1));
 
-	auto matinv = mat1.inverse();
+	auto matinv = minverse(mat1);
 
 	clfe::println(matinv);
 
@@ -129,7 +176,7 @@ int main()
 	auto expanded = clfe::mresize<3, 3, float>(shrunk, 2, 3, 5, 6, 9, 6, 1);
 	clfe::println(expanded);
 
-	clfe::println(mvcast(rvec));
+	//clfe::println(mvcast(rvec));
 
 	clfe::vec4f result;
 	clfe::println(result);

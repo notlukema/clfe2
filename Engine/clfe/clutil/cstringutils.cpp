@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 #include <malloc.h>
-#include <corecrt.h>
+//#include <corecrt.h> // Already included by cstdlib
 #include <string.h>
 #include <wchar.h>
 

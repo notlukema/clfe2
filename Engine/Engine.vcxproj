@@ -139,11 +139,14 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="clfe\clmath\quatutils.h" />
     <ClCompile Include="clfe\clutil\cstringutils.cpp" />
     <ClCompile Include="clfe\clwind\wind.cpp" />
     <ClCompile Include="clfe\clwind\windows\winclass.cpp" />
+    <ClCompile Include="clfe\clwind\windows.cpp" />
     <ClCompile Include="clfe\clwind\windows\win_defproc.cpp" />
     <ClCompile Include="clfe\clwind\windows\wwind.cpp" />
+    <ClCompile Include="clfe\clwind\wsettings.cpp" />
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +179,7 @@
     <ClInclude Include="clfe\clwind\windows.h" />
     <ClInclude Include="clfe\clwind\windows\wwind.h" />
     <ClInclude Include="clfe\clwind\window_index.h" />
+    <ClInclude Include="clfe\clwind\wsettings.h" />
     <ClInclude Include="clfe\features.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

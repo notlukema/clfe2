@@ -1,6 +1,13 @@
 ﻿#ifndef CLFE_CLMATH_MCONST_H
 #define CLFE_CLMATH_MCONST_H
-#define _SILENCE_ALL_CXX23_DEPRECATION_WARNINGS
+
+#if !defined(_CLFE_DEF_THRES2_VALUE)
+#define _CLFE_DEF_THRES2_VALUE mconst<T>::epsilon2()
+#endif
+
+#if !defined(_CLFE_DEF_THRES_VALUE)
+#define _CLFE_DEF_THRES_VALUE mconst<T>::epsilon()
+#endif
 
 #include <numbers>
 #include <limits>
@@ -15,7 +22,7 @@ namespace clfe
 {
 
 	template <typename T>
-		requires arithmetic<T>
+		requires arithmetic<T> || floating_point<T> // floating_point is for constraint subsumption with later template specializations
 	struct mnumbers
 	{
 	public:
@@ -23,6 +30,7 @@ namespace clfe
 		static constexpr T log2e = static_cast<T>(0);
 		static constexpr T log10e = static_cast<T>(0);
 		static constexpr T pi = static_cast<T>(0);
+		static constexpr T halfpi = static_cast<T>(0);
 		static constexpr T inv_pi = static_cast<T>(0);
 		static constexpr T inv_sqrtpi = static_cast<T>(0);
 		static constexpr T ln2 = static_cast<T>(0);
@@ -44,6 +52,7 @@ namespace clfe
 		static constexpr T log2e = std::numbers::log2e_v<T>;
 		static constexpr T log10e = std::numbers::log10e_v<T>;
 		static constexpr T pi = std::numbers::pi_v<T>;
+		static constexpr T halfpi = std::numbers::pi_v<T> / static_cast<T>(2);
 		static constexpr T inv_pi = std::numbers::inv_pi_v<T>;
 		static constexpr T inv_sqrtpi = std::numbers::inv_sqrtpi_v<T>;
 		static constexpr T ln2 = std::numbers::ln2_v<T>;
@@ -61,7 +70,7 @@ namespace clfe
 	struct mconst
 	{
 	public:
-		using numbers = mnumbers<T>;
+		using num = mnumbers<T>;
 		/*
 		static constexpr T e = mnumbers<T>::e;
 		static constexpr T log2e = mnumbers<T>::log2e;
@@ -149,6 +158,11 @@ namespace clfe
 		static constexpr T epsilon() noexcept
 		{
 			return mlimits::epsilon();
+		}
+
+		static constexpr T epsilon2() noexcept
+		{
+			return mlimits::epsilon() * mlimits::epsilon();
 		}
 
 		static constexpr T round_error() noexcept

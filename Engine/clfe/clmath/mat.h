@@ -17,9 +17,12 @@ namespace clfe
 		D_t data[Rows];
 
 	public:
+#if defined(_CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY)
+		constexpr explicit clmmat(bool identity = false) : data{}
+#else
 		constexpr explicit clmmat(bool identity = true) : data{}
+#endif
 		{
-#if !defined(_CLFE_CLMATH_MATRIX_NO_DEFAULT_IDENTITY)
 			if constexpr (arithmetic<T> && (Rows == Cols))
 			{
 				if (identity)
@@ -30,15 +33,14 @@ namespace clfe
 					}
 				}
 			}
-#endif
 		}
 
-		// iscalar = identity scalar (default 1 for square matrices)
-		constexpr explicit clmmat(T i_scalar) requires (!msame<T, bool>) && arithmetic<T> && (Rows == Cols) : data{}
+		// Identity scalar (default 1 for square matrices)
+		constexpr explicit clmmat(T scalar) requires (!msame<T, bool>) && arithmetic<T> && (Rows == Cols) : data{}
 		{
 			for (clmsize_t i = 0; i < Rows; ++i)
 			{
-				data[i].set(i, i_scalar);
+				data[i].set(i, scalar);
 			}
 		}
 
@@ -183,10 +185,10 @@ namespace clfe
 			return *this;
 		}
 
-	private:
+	protected:
 		// The row only moves downwards
 		template <typename U, clmsize_t Size>
-		constexpr U detHelper(clmsize_t r, const clmsize_t (&c)[Size])
+		constexpr U det_helper(clmsize_t r, const clmsize_t (&c)[Size])
 		{
 			if constexpr (Size == 1)
 			{
@@ -212,16 +214,31 @@ namespace clfe
 						c2[k] = c[j];
 						++j;
 					}
-					sum += flip * static_cast<U>(get(r, c[i])) * detHelper<U, Size - 1>(r + 1, c2);
+					sum += flip * static_cast<U>(get(r, c[i])) * det_helper<U, Size - 1>(r + 1, c2);
 					flip = static_cast<U>(0) - flip;
 				}
 				return sum;
 			}
 		}
 
-		// The row only moves downwards but can be initially custom set
+	public:
+		template <typename U = T>
+		constexpr U determinant() requires (Rows == Cols) && arithmetic<T, U>
+		{
+			clmsize_t c[Cols] = {};
+			for (clmsize_t i = 0; i < Cols; ++i)
+			{
+				c[i] = i;
+			}
+			return det_helper<U, Cols>(0, c);
+		}
+
+		/* Not very important functions that would complicate things a lot, moved to matop.h
+		* 
+	protected:
+		// The row only moves downwards but can vary
 		template <typename U, clmsize_t Size>
-		constexpr U detHelper2(const clmsize_t (&r)[Size], const clmsize_t(&c)[Size])
+		constexpr U det_helper2(const clmsize_t (&r)[Size], const clmsize_t(&c)[Size])
 		{
 			if constexpr (Size == 1)
 			{
@@ -252,7 +269,7 @@ namespace clfe
 						c2[k] = c[j];
 						++j;
 					}
-					sum += flip * static_cast<U>(get(r[0], c[i])) * detHelper2<U, Size - 1>(r2, c2);
+					sum += flip * static_cast<U>(get(r[0], c[i])) * det_helper2<U, Size - 1>(r2, c2);
 					flip = static_cast<U>(0) - flip;
 				}
 				return sum;
@@ -260,19 +277,6 @@ namespace clfe
 		}
 
 	public:
-		template <typename U = T>
-		constexpr U determinant() requires (Rows == Cols) && arithmetic<T, U>
-		{
-			clmsize_t c[Cols] = {};
-			for (clmsize_t i = 0; i < Cols; ++i)
-			{
-				c[i] = i;
-			}
-			return detHelper<U, Cols>(0, c);
-		}
-
-		/* Not very important functions that would complicate things a lot
-		
 		template <typename U = T>
 		constexpr U minor(clmsize_t r, clmsize_t c) requires (Rows == Cols) && arithmetic<T, U>
 		{
@@ -295,7 +299,7 @@ namespace clfe
 				++r1;
 				++c1;
 			}
-			return detHelper2<U, Rows - 1>(ra, ca);
+			return det_helper2<U, Rows - 1>(ra, ca);
 		}
 
 		// This calculation is crazy expensive for matrices larger than 3x3
@@ -319,7 +323,7 @@ namespace clfe
 				U flip2 = static_cast<U>(0) - flip;
 				for (clmsize_t c = 0; c < Cols; ++c)
 				{
-					result[r].set(c, flip2 * detHelper2<U, Rows - 1>(ra, ca));
+					result[r].set(c, flip2 * det_helper2<U, Rows - 1>(ra, ca));
 					flip2 = static_cast<U>(0) - flip2;
 					if (c < Cols - 1)
 					{
@@ -341,9 +345,9 @@ namespace clfe
 		{
 			return cofactor<U>().transpose();
 		}
-		*/
 
 		// This calculation is crazy expensive for matrices larger than 3x3
+		// Careful of when the determinant is 0
 		template <typename U = T>
 		constexpr clmmat<Rows, Cols, U> inverse() requires (Rows == Cols) && arithmetic<T, U>
 		{
@@ -365,7 +369,7 @@ namespace clfe
 				U flip2 = static_cast<U>(0) - flip;
 				for (clmsize_t c = 0; c < Cols; ++c)
 				{
-					result[r].set(c, flip2 * detHelper2<U, Rows - 1>(ra, ca) * invdet);
+					result[r].set(c, flip2 * det_helper2<U, Rows - 1>(ra, ca) * invdet);
 					flip2 = static_cast<U>(0) - flip2;
 					if (c < Cols - 1)
 					{
@@ -380,6 +384,7 @@ namespace clfe
 			}
 			return result.transpose();
 		}
+		*/
 
 	};
 

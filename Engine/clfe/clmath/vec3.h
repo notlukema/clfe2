@@ -311,63 +311,69 @@ namespace clfe
 		//
 
 		template <typename U = T>
-		constexpr U dis2() const requires arithmetic<T, U>
+		constexpr U len2() const requires arithmetic<T, U>
 		{
 			return static_cast<U>(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]);
 		}
 
 		template <typename U = T>
-		constexpr inline U distance() const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr inline U length() const requires arithmetic<T, U>
 		{
-			return static_cast<U>(sqrt(dis2<U>()));
+			return static_cast<U>(sqrt(len2<U>()));
 		}
 
 		template <typename U = T>
-		constexpr clmvec<3, U> normalized() const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr inline U inv_len() const requires floating_point<T, U>
 		{
-			U dist = distance<U>();
-			return clmvec<3, U>(static_cast<U>(data[0] / dist), static_cast<U>(data[1] / dist), static_cast<U>(data[2] / dist));
+			return static_cast<U>(1) / static_cast<U>(sqrt(len2<U>()));
 		}
 
-		constexpr clmvec<3, T>& normalize() requires arithmetic<T> && requires { sqrt(static_cast<T>(0)); }
+		template <typename U = T>
+		constexpr clmvec<3, U> normalized() const requires floating_point<T, U>
 		{
-			T dist = distance<T>();
-			data[0] /= dist;
-			data[1] /= dist;
-			data[2] /= dist;
+			U invlen = inv_len<U>();
+			return clmvec<3, U>(static_cast<U>(data[0] * invlen), static_cast<U>(data[1] * invlen), static_cast<U>(data[2] * invlen));
+		}
+
+		constexpr clmvec<3, T>& normalize() requires floating_point<T>
+		{
+			T invlen = inv_len<T>();
+			data[0] *= invlen;
+			data[1] *= invlen;
+			data[2] *= invlen;
 			return *this;
 		}
 
 		// 
 
 		template <typename U = T>
-		constexpr clmvec<3, U> snormalized(const clmvec<3, U>& exception = clmvec<3, U>(), U d2line = mconst<U>::epsilon()) const requires arithmetic<T, U> && requires { sqrt(static_cast<U>(0)); }
+		constexpr clmvec<3, U> snormalized(const clmvec<3, U>& ex, U thres2 = mconst<U>::epsilon2()) const requires floating_point<T, U>
 		{
-			U d2 = dis2<U>();
-			if (d2 < d2line)
+			U l2 = len2<U>();
+			if (l2 < thres2)
 			{
-				return clmvec<3, U>(exception);
+				return clmvec<3, U>(ex);
 			}
 
-			U dist = static_cast<U>(sqrt(d2));
-			return clmvec<3, U>(static_cast<U>(data[0] / dist), static_cast<U>(data[1] / dist), static_cast<U>(data[2] / dist));
+			U invlen = static_cast<U>(1) / static_cast<U>(sqrt(l2));
+			return clmvec<3, U>(static_cast<U>(data[0] * invlen), static_cast<U>(data[1] * invlen), static_cast<U>(data[2] * invlen));
 		}
 
-		constexpr clmvec<3, T>& snormalize(const clmvec<3, T>& exception = clmvec<3, T>(), T d2line = mconst<T>::epsilon()) requires arithmetic<T> && requires { sqrt(static_cast<T>(0)); }
+		constexpr clmvec<3, T>& snormalize(const clmvec<3, T>& ex, T thres2 = _CLFE_DEF_THRES2_VALUE) requires floating_point<T>
 		{
-			T d2 = dis2<T>();
-			if (d2 < d2line)
+			T l2 = len2<T>();
+			if (l2 < thres2)
 			{
-				data[0] = exception.get(0);
-				data[1] = exception.get(1);
-				data[2] = exception.get(2);
+				data[0] = ex.get(0);
+				data[1] = ex.get(1);
+				data[2] = ex.get(2);
 				return *this;
 			}
 
-			T dist = static_cast<T>(sqrt(d2));
-			data[0] /= dist;
-			data[1] /= dist;
-			data[2] /= dist;
+			T invlen = static_cast<T>(1) / static_cast<T>(sqrt(l2));
+			data[0] *= invlen;
+			data[1] *= invlen;
+			data[2] *= invlen;
 			return *this;
 		}
 

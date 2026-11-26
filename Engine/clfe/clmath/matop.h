@@ -121,7 +121,225 @@ namespace clfe
 		return clmmat<Rows, Cols, T>(mat);
 	}
 
-	// Math (non)
+	//
+
+	// Identity matrix
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr clmmat<Size, Size, T> midentity()
+	{
+		return clmmat<Size, Size, T>(true);
+	}
+
+	// Transpose a matrix
+	template <clmsize_t Rows, clmsize_t Cols, typename T, clmsize_t Size0>
+		requires (Rows > 0) && (Cols > 0) && arithmetic<T>
+	constexpr clmmat<Cols, Rows, T> mtranspose(const clmmat<Rows, Cols, T>& mat)
+	{
+		clmmat<Cols, Rows, T> result;
+		for (clmsize_t r = 0; r < Rows; ++r)
+		{
+			for (clmsize_t c = 0; c < Cols; ++c)
+			{
+				result.set(c, r, mat.get(r, c));
+			}
+		}
+		return result;
+	}
+	
+	// Helper used to calculate determinants
+	template <clmsize_t Size, typename T, clmsize_t Size0>
+		requires (Size > 0) && arithmetic<T>
+	constexpr T mdet_helper(const clmmat<Size, Size, T>& mat, const clmsize_t(&r)[Size0], const clmsize_t(&c)[Size0])
+	{
+		if constexpr (Size0 == 1)
+		{
+			return static_cast<T>(mat.get(r[0], c[0]));
+		}
+		else if constexpr (Size0 == 2)
+		{
+			return static_cast<T>(mat.get(r[0], c[0])) * static_cast<T>(mat.get(r[1], c[1])) - static_cast<T>(mat.get(r[0], c[1])) * static_cast<T>(mat.get(r[1], c[0]));
+		}
+		else
+		{
+			T sum = static_cast<T>(0);
+			T flip = static_cast<T>(1);
+			clmsize_t r2[Size0 - 1] = {};
+			for (clmsize_t i = 0; i < Size0 - 1; ++i)
+			{
+				r2[i] = r[i + 1];
+			}
+			for (clmsize_t i = 0; i < Size0; ++i)
+			{
+				clmsize_t c2[Size0 - 1] = {};
+				for (clmsize_t k = 0, j = 0; k < Size0 - 1; ++k)
+				{
+					if (j == i)
+					{
+						++j;
+					}
+					c2[k] = c[j];
+					++j;
+				}
+				sum += flip * static_cast<T>(mat.get(r[0], c[i])) * mdet_helper<Size, T, Size0 - 1>(mat, r2, c2);
+				flip = static_cast<T>(0) - flip;
+			}
+			return sum;
+		}
+	}
+
+	// Calculate the determinant of a matrix
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr T mdeterminant(const clmmat<Size, Size, T>& mat)
+	{
+		clmsize_t ra[Size] = {};
+		clmsize_t ca[Size] = {};
+		for (clmsize_t i = 0; i < Size; ++i)
+		{
+			ra[i] = i;
+			ca[i] = i;
+		}
+		return mdet_helper<Size, T, Size>(mat, ra, ca);
+	}
+
+	// Calculate the minor of a matrix
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr T mminor(const clmmat<Size, Size, T>& mat, clmsize_t r, clmsize_t c)
+	{
+		clmsize_t ra[Size - 1] = {};
+		clmsize_t ca[Size - 1] = {};
+		clmsize_t r1 = 0;
+		clmsize_t c1 = 0;
+		for (clmsize_t i = 0; i < Size - 1; ++i)
+		{
+			if (r1 == r)
+			{
+				++r1;
+			}
+			if (c1 == c)
+			{
+				++c1;
+			}
+			ra[i] = r1;
+			ca[i] = c1;
+			++r1;
+			++c1;
+		}
+		return mdet_helper<Size, T, Size - 1>(mat, ra, ca);
+	}
+
+	// Calculate the cofactor of a matrix
+	// This calculation is crazy expensive for matrices larger than 3x3
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr clmmat<Size, Size, T> mcofactor(const clmmat<Size, Size, T>& mat)
+	{
+		clmmat<Size, Size, T> result;
+		clmsize_t ra[Size - 1] = {};
+		for (clmsize_t i = 0; i < Size - 1; ++i)
+		{
+			ra[i] = i + 1;
+		}
+		T flip = static_cast<T>(-1);
+		for (clmsize_t r = 0; r < Size; ++r)
+		{
+			clmsize_t ca[Size - 1] = {};
+			for (clmsize_t i = 0; i < Size - 1; ++i)
+			{
+				ca[i] = i + 1;
+			}
+			T flip2 = static_cast<T>(0) - flip;
+			for (clmsize_t c = 0; c < Size; ++c)
+			{
+				result.set(r, c, flip2 * mdet_helper<Size, T, Size - 1>(mat, ra, ca));
+				flip2 = static_cast<T>(0) - flip2;
+				if (c < Size - 1)
+				{
+					--ca[c];
+				}
+			}
+			flip = static_cast<T>(0) - flip;
+			if (r < Size - 1)
+			{
+				--ra[r];
+			}
+		}
+		return result;
+	}
+
+	// Calculate the adjoint of a matrix
+	// This calculation is crazy expensive for matrices larger than 3x3
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr inline clmmat<Size, Size, T> madjoint(const clmmat<Size, Size, T>& mat) requires arithmetic<T>
+	{
+		return mcofactor<Size, T>(mat).transpose();
+	}
+
+	// Calculate the inverse with a pre-determined determinant
+	// This calculation is crazy expensive for matrices larger than 3x3
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr clmmat<Size, Size, T> minverse(const clmmat<Size, Size, T>& mat, T det)
+	{
+		T invdet = static_cast<T>(1) / det;
+		clmmat<Size, Size, T> result;
+		clmsize_t ra[Size - 1] = {};
+		for (clmsize_t i = 0; i < Size - 1; ++i)
+		{
+			ra[i] = i + 1;
+		}
+		T flip = static_cast<T>(-1);
+		for (clmsize_t r = 0; r < Size; ++r)
+		{
+			clmsize_t ca[Size - 1] = {};
+			for (clmsize_t i = 0; i < Size - 1; ++i)
+			{
+				ca[i] = i + 1;
+			}
+			T flip2 = static_cast<T>(0) - flip;
+			for (clmsize_t c = 0; c < Size; ++c)
+			{
+				result.set(r, c, flip2 * mdet_helper<Size, T, Size - 1>(mat, ra, ca) * invdet);
+				flip2 = static_cast<T>(0) - flip2;
+				if (c < Size - 1)
+				{
+					--ca[c];
+				}
+			}
+			flip = static_cast<T>(0) - flip;
+			if (r < Size - 1)
+			{
+				--ra[r];
+			}
+		}
+		return result.transpose();
+	}
+
+	// Calculate the inverse of a matrix (no checks)
+	// This calculation is crazy expensive for matrices larger than 3x3
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr inline clmmat<Size, Size, T> minverse(const clmmat<Size, Size, T>& mat)
+	{
+		return minverse<Size, T>(mat, mdeterminant<Size, T>(mat));
+	}
+
+	// Calculate the inverse of a matrix (with checks)
+	// This calculation is crazy expensive for matrices larger than 3x3
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr inline clmmat<Size, Size, T> msinverse(const clmmat<Size, Size, T>& mat)
+	{
+		T det = mdeterminant<Size, T>(mat);
+		if (det == 0)
+		{
+			return midentity<Size, T>();
+		}
+		return minverse<Size, T>(mat, det);
+	}
 
 	// Operations
 
@@ -251,10 +469,10 @@ namespace clfe
 		return mat;
 	}
 
-	// mat * mat
+	// Matrix multiplication
 	template <clmsize_t Rows1, clmsize_t Size, clmsize_t Cols2, typename T, typename U>
 		requires (Size > 0) && (Rows1 > 0) && (Cols2 > 0) && arithmetic<T, U>
-	constexpr auto operator*(const clmmat<Rows1, Size, T>& mat1, const clmmat<Size, Cols2, U>& mat2) -> clmmat<Rows1, Cols2, decltype(static_cast<T>(0) * static_cast<U>(0))>
+	constexpr auto mmul(const clmmat<Rows1, Size, T>& mat1, const clmmat<Size, Cols2, U>& mat2) -> clmmat<Rows1, Cols2, decltype(static_cast<T>(0) * static_cast<U>(0))>
 	{
 		auto result = clmmat<Rows1, Cols2, decltype(static_cast<T>(0) + static_cast<U>(0))>(false);
 		for (clmsize_t r = 0; r < Rows1; ++r)
@@ -270,6 +488,14 @@ namespace clfe
 			}
 		}
 		return result;
+	}
+
+	// mat * mat
+	template <clmsize_t Rows1, clmsize_t Size, clmsize_t Cols2, typename T, typename U>
+		requires (Size > 0) && (Rows1 > 0) && (Cols2 > 0) && arithmetic<T, U>
+	constexpr inline auto operator*(const clmmat<Rows1, Size, T>& mat1, const clmmat<Size, Cols2, U>& mat2) -> clmmat<Rows1, Cols2, decltype(static_cast<T>(0)* static_cast<U>(0))>
+	{
+		return mmul<Rows1, Size, Cols2, T, U>(mat1, mat2);
 	}
 
 	// mat * val
@@ -304,8 +530,7 @@ namespace clfe
 		requires (Size > 0) && arithmetic<T, U>
 	constexpr clmmat<Size, Size, T>& operator*=(const clmmat<Size, Size, T>& mat1, const clmmat<Size, Size, U>& mat2)
 	{
-		auto result = mat2 * mat1;
-		mat1 = result;
+		mat1 = mmul<Size, Size, Size, U, T>(mat2, mat1);
 		return mat1;
 	}
 

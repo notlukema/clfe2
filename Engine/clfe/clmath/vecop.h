@@ -1,6 +1,7 @@
 #ifndef CLFE_CLMATH_VECOP_H
 #define CLFE_CLMATH_VECOP_H
 
+#include "math.h"
 #include "mdef.h"
 #include "vec.h"
 
@@ -84,6 +85,101 @@ namespace clfe
 	constexpr inline clmvec<Size, T> vcast(const clmvec<Size, U>& vec)
 	{
 		return clmvec<Size, T>(vec);
+	}
+
+	//
+
+	// Default unit vector (x = 1)
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr clmvec<Size, T> videntity()
+	{
+		clmvec<Size, T> result = clmvec<Size, T>();
+		result.set(0, static_cast<T>(1));
+		return result;
+	}
+
+	// Length squared of vector
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr T vlen2(const clmvec<Size, T>& vec)
+	{
+		T sum = static_cast<T>(0);
+		for (clmsize_t i = 0; i < Size; ++i)
+		{
+			sum += vec.get(i) * vec.get(i);
+		}
+		return sum;
+	}
+
+	// Length of vector
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && arithmetic<T>
+	constexpr inline T vlength(const clmvec<Size, T>& vec)
+	{
+		return static_cast<T>(sqrt(vlen2<Size, T>(vec)));
+	}
+
+	// Inverse length of vector
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && floating_point<T>
+	constexpr inline T vinv_len(const clmvec<Size, T>& vec)
+	{
+		return static_cast<T>(1) / static_cast<T>(sqrt(vlen2<Size, T>(vec)));
+	}
+
+	// Normalize without checking length
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && floating_point<T>
+	constexpr clmvec<Size, T> vnormalize(const clmvec<Size, T>& vec)
+	{
+		T invlen = vinv_len<Size, T>(vec);
+		clmvec<Size, T> result;
+		for (clmsize_t i = 0; i < Size; ++i)
+		{
+			result.set(i, vec.get(i) * invlen);
+		}
+		return result;
+	}
+
+	// Safe normalize with default unit vector as exception
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && floating_point<T>
+	constexpr clmvec<Size, T> vsnormalize(const clmvec<Size, T>& vec, T thres2 = _CLFE_DEF_THRES2_VALUE)
+	{
+		T l2 = vlen2<Size, T>(vec);
+		if (l2 <= thres2)
+		{
+			return videntity<Size, T>();
+		}
+
+		T invlen = static_cast<T>(1) / static_cast<T>(sqrt(l2));
+		clmvec<Size, T> result;
+		for (clmsize_t i = 0; i < Size; ++i)
+		{
+			result.set(i, static_cast<T>(vec.get(i)) * invlen);
+		}
+		return result;
+	}
+
+	// Safe normalize with exception
+	template <clmsize_t Size, typename T>
+		requires (Size > 0) && floating_point<T>
+	constexpr clmvec<Size, T> vsnormalize(const clmvec<Size, T>& vec, const clmvec<Size, T>& ex, T thres2 = _CLFE_DEF_THRES2_VALUE)
+	{
+		T l2 = vlen2<Size, T>(vec);
+		if (l2 <= thres2)
+		{
+			return clmvec<Size, T>(ex);
+		}
+
+		T invlen = static_cast<T>(1) / static_cast<T>(sqrt(l2));
+		clmvec<Size, T> result;
+		for (clmsize_t i = 0; i < Size; ++i)
+		{
+			result.set(i, static_cast<T>(vec.get(i)) * invlen);
+		}
+		return result;
 	}
 
 	// Math

@@ -1,6 +1,8 @@
 #include "wind.h"
 
 #include <vector>
+#include <cstdint>
+#include <cstdlib> // free()
 
 namespace clfe
 {
@@ -41,6 +43,24 @@ namespace clfe
 
 	void clwindow::term()
 	{
+		/*
+		uint32_t size = static_cast<uint32_t>(Windows.size());
+		clwindow** windows = new clwindow*[size];
+
+		// Call destroy on all windows first
+		for (uint32_t i = 0; i < size; ++i)
+		{
+			windows[i] = Windows.front();
+			windows[i]->destroy();
+		}
+
+		for (uint32_t i = 0; i < size; ++i)
+		{
+			delete windows[i];
+		}
+
+		delete[] windows;
+		*/
 		while (Windows.size() > 0)
 		{
 			delete Windows.front();
@@ -62,7 +82,7 @@ namespace clfe
 		{
 			if (*it == window)
 			{
-				Windows.erase(it);
+				it = Windows.erase(it);
 			}
 			else
 			{
@@ -73,14 +93,56 @@ namespace clfe
 
 	//
 
-	clwindow::clwindow() : x(0), y(0), width(0), height(0), name(nullptr)
+	clwindow::clwindow() : name_(nullptr), closed_(false), close_requested_(false)
 	{
 		Windows.push_back(this);
 	}
 
 	clwindow::~clwindow()
 	{
+		if (!closed_)
+		{
+			remove_window(this);
+		}
+		free(name_); // This should basically always be a c string copy
+	}
+
+	void clwindow::destroy()
+	{
+		if (closed_)
+		{
+			return;
+		}
+
+		virt_inner_destroy();
 		remove_window(this);
+		closed_ = true;
+		close_requested_ = true;
+	}
+
+	void clwindow::request_close()
+	{
+		if (closed_)
+		{
+			return;
+		}
+
+		close_requested_ = true;
+		// Callback
+		if (false)
+		{
+			destroy();
+		}
+	}
+
+	void clwindow::suppress_close_request()
+	{
+		if (closed_)
+		{
+			return;
+		}
+
+		close_requested_ = false;
 	}
 
 }
